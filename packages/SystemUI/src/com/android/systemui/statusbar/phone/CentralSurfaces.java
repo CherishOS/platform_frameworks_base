@@ -359,4 +359,8 @@ public interface CentralSurfaces extends Dumpable, LifecycleOwner, CoreStartable
             ExpandableNotificationRow associatedView);
 
     GameSpaceManager getGameSpaceManager();
+
+    void brightnessControl(MotionEvent event);
+
+    void onBrightnessChanged(boolean upOrCancel);
 }
