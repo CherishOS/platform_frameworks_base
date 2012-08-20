@@ -7007,6 +7007,16 @@ public final class Settings {
         public static final String CAMERA_LAUNCH = "camera_launch";
 
         /**
+         * Volume keys control cursor in text fields (default is 0)
+         * 0 - Disabled
+         * 1 - Volume up/down moves cursor left/right
+         * 2 - Volume up/down moves cursor right/left
+         * @hide
+         */
+        @Readable
+        public static final String VOLUME_KEY_CURSOR_CONTROL = "volume_key_cursor_control";
+
+        /**
          * Whether the phone vibrates on call connect
          * @hide
          */
