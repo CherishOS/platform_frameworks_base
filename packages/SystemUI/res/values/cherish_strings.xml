@@ -116,4 +116,8 @@
     <string name="usb_use_tethering">USB tethering</string>
     <string name="usb_use_MIDI">MIDI</string>
     <string name="usb_use">Use USB for</string>
+
+    <!-- Navigation bar dpad -->
+    <string name="accessibility_dpad_left">Cursor left</string>
+    <string name="accessibility_dpad_right">Cursor right</string>
 </resources>
