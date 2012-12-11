@@ -35,6 +35,12 @@
         android:clipToPadding="false"
         systemui:isVertical="false">
 
+        <FrameLayout
+            android:id="@+id/dpad_group"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipChildren="false" />
+
         <LinearLayout
             android:id="@+id/center_group"
             android:layout_width="wrap_content"
