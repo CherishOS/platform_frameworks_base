@@ -7377,6 +7377,13 @@ public final class Settings {
         public static final String QS_SHOW_BATTERY_PERCENT = "qs_show_battery_percent";
 
         /**
+         * Whether to allow one finger quick settings expansion on the side of the statusbar.
+         * 0 = 0ff, 1 = right, 2 = left, 3 = both
+         * @hide
+         */
+        public static final String STATUS_BAR_QUICK_QS_PULLDOWN = "qs_quick_pulldown";
+
+        /**
          * Whether the HighTouchSensitivity is activated or not.
          * 0 = off, 1 = on
          * @hide
