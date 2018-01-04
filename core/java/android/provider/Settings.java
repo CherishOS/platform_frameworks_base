@@ -6664,6 +6664,27 @@ public final class Settings {
          * the setting value. See an example above.
          */
 
+	/**
+         * Whether to enable Smart Pixels
+         * @hide
+         */
+        public static final String SMART_PIXELS_ENABLE = "smart_pixels_enable";
+        /**
+         * Smart Pixels pattern
+         * @hide
+         */
+        public static final String SMART_PIXELS_PATTERN = "smart_pixels_pattern";
+        /**
+         * Smart Pixels Shift Timeout
+         * @hide
+         */
+        public static final String SMART_PIXELS_SHIFT_TIMEOUT = "smart_pixels_shift_timeout";
+        /**
+         * Whether Smart Pixels should enable on power saver mode
+         * @hide
+         */
+        public static final String SMART_PIXELS_ON_POWER_SAVE = "smart_pixels_on_power_save";
+
         /**
          * Whether or not to vibrate when a touchscreen gesture is detected
          * @hide
