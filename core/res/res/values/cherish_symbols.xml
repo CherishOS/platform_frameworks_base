@@ -186,4 +186,7 @@
     <java-symbol type="string" name="config_batterymeterLandPowersavePathOneUI7" />
     <java-symbol type="string" name="config_batterymeterLandErrorPerimeterPathOneUI7" />
     <java-symbol type="string" name="config_batterymeterLandLeafPathOneUI7" />
+
+  <!-- Power menu -->
+  <java-symbol type="array" name="config_restartActionsList" />
 </resources>
