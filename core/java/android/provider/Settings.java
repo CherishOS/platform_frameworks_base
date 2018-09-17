@@ -6975,6 +6975,12 @@ public final class Settings {
         public static final String VOLBTN_MUSIC_CONTROLS = "volbtn_music_controls";
 
         /**
+         * Force show navigation bar setting.
+         * @hide
+         */
+        public static final String FORCE_SHOW_NAVBAR = "force_show_navbar";
+
+        /**
          * Whether to answer the call with the volume keys, the value is boolean.
          * 0 = 0ff, 1 = on
          * @hide

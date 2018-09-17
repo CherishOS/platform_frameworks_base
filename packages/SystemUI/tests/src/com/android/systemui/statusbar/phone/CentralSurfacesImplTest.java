@@ -205,6 +205,7 @@ import com.android.systemui.statusbar.window.StatusBarWindowController;
 import com.android.systemui.statusbar.window.StatusBarWindowControllerStore;
 import com.android.systemui.statusbar.window.StatusBarWindowStateController;
 import com.android.systemui.util.FakeEventLog;
+import com.android.systemui.tuner.TunerService;
 import com.android.systemui.util.WallpaperController;
 import com.android.systemui.util.concurrency.FakeExecutor;
 import com.android.systemui.util.concurrency.MessageRouterImpl;
@@ -363,6 +364,7 @@ public class CentralSurfacesImplTest extends SysuiTestCase {
     @Mock private UserTracker mUserTracker;
     @Mock private AvalancheProvider mAvalancheProvider;
     @Mock IPowerManager mPowerManagerService;
+    @Mock TunerService mTunerService;
     @Mock ActivityStarter mActivityStarter;
     @Mock private WindowRootViewVisibilityInteractor mWindowRootViewVisibilityInteractor;
     @Mock private KeyboardShortcuts mKeyboardShortcuts;
@@ -639,6 +641,7 @@ public class CentralSurfacesImplTest extends SysuiTestCase {
                 mLightRevealScrim,
                 mAlternateBouncerInteractor,
                 mUserTracker,
+                mTunerService,
                 mActivityStarter,
                 mBrightnessMirrorShowingRepository,
                 mGlanceableHubContainerController,
