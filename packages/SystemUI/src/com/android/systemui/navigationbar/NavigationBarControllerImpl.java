@@ -29,6 +29,8 @@ import android.hardware.display.DisplayManager;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.os.Trace;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
@@ -214,7 +216,13 @@ public class NavigationBarControllerImpl implements
         });
     }
 
-    private boolean shouldCreateNavBarAndTaskBar(int displayId) {
+    private boolean shouldCreateNavBarAndTaskBar(Context context, int displayId) {
+        if (displayId == mDisplayTracker.getDefaultDisplayId() &&
+                Settings.System.getIntForUser(context.getContentResolver(),
+                        Settings.System.FORCE_SHOW_NAVBAR, 0,
+                        UserHandle.USER_CURRENT) == 1) {
+            return true;
+        }
         if (mHasNavBar.indexOfKey(displayId) > -1) {
             return mHasNavBar.get(displayId);
         }
@@ -244,7 +252,7 @@ public class NavigationBarControllerImpl implements
     /** @return {@code true} if taskbar is enabled, false otherwise */
     private boolean initializeTaskbarIfNecessary() {
         boolean taskbarEnabled = supportsTaskbar() && shouldCreateNavBarAndTaskBar(
-                mContext.getDisplayId());
+                mContext, mContext.getDisplayId());
 
         if (taskbarEnabled) {
             Trace.beginSection("NavigationBarController#initializeTaskbarIfNecessary");
@@ -366,7 +374,7 @@ public class NavigationBarControllerImpl implements
         final int displayId = display.getDisplayId();
         final boolean isOnDefaultDisplay = displayId == mDisplayTracker.getDefaultDisplayId();
 
-        if (!shouldCreateNavBarAndTaskBar(displayId)) {
+        if (!shouldCreateNavBarAndTaskBar(mContext, displayId)) {
             return;
         }
 
@@ -472,6 +480,16 @@ public class NavigationBarControllerImpl implements
     @Override
     public @Nullable NavigationBar getNavigationBar(int displayId) {
         return mNavigationBars.get(displayId);
+    }
+
+    @Override
+    public void onDisplayReady(int displayId) {
+        mCommandQueueCallbacks.onDisplayReady(displayId);
+    }
+
+    @Override
+    public void onDisplayRemoved(int displayId) {
+        mCommandQueueCallbacks.onDisplayRemoved(displayId);
     }
 
     @Override
