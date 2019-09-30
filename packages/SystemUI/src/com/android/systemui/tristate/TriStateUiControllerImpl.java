@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2019 CypherOS
  *           (C) 2014-2020 Paranoid Android
- *           (C) 2020-2023 crDroid Android Project
+ *           (C) 2020-2024 crDroid Android Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -155,12 +155,12 @@ public class TriStateUiControllerImpl implements TriStateUiController,
         public void onCaptionEnabledStateChanged(Boolean isEnabled, Boolean checkBeforeSwitch) {}
 
         @Override
+        public void onVolumeChangedFromKey() {}
+
+        @Override
         public void onConfigurationChanged() {
             updateTriStateLayout();
         }
-
-	@Override
-    	public void onVolumeChangedFromKey() { }
     };
 
     private int mDensity;
@@ -267,7 +267,7 @@ public class TriStateUiControllerImpl implements TriStateUiController,
                 checkOrientationType();
             }
         };
-        mIntentAction = context.getResources().getString(com.android.internal.R.string.config_alertSliderIntent);
+        mIntentAction = context.getResources().getString(R.string.config_alertSliderIntent);
         mIntentActionSupported = mIntentAction != null && !mIntentAction.isEmpty();
 
         IntentFilter filter = new IntentFilter();
@@ -453,7 +453,7 @@ public class TriStateUiControllerImpl implements TriStateUiController,
                         break;
                 }
 
-                int triStatePos = res.getInteger(com.android.internal.R.integer.config_alertSliderLocation);
+                int triStatePos = res.getInteger(R.integer.config_alertSliderLocation);
                 boolean isTsKeyRight = true;
                 if (triStatePos == TRI_STATE_UI_POSITION_LEFT) {
                     isTsKeyRight = false;
@@ -585,7 +585,7 @@ public class TriStateUiControllerImpl implements TriStateUiController,
                     }
                     if (mDialogView != null && bg != 0) {
                         mDialogView.setBackgroundDrawable(res.getDrawable(bg));
-                        mBackgroundColor = getAttrColor(android.R.attr.colorPrimary);
+                        mBackgroundColor = getAttrColor(com.android.internal.R.attr.colorSurface);
                         mDialogView.setBackgroundTintList(ColorStateList.valueOf(mBackgroundColor));
                     }
                     mDialogPosition = positionY2;
