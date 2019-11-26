@@ -21,6 +21,7 @@ import com.android.systemui.qs.QsEventLogger
 import com.android.systemui.qs.pipeline.shared.TileSpec
 import com.android.systemui.qs.shared.model.TileCategory
 import com.android.systemui.qs.tileimpl.QSTileImpl
+import com.android.systemui.qs.tiles.DataSwitchTile
 import com.android.systemui.qs.tiles.FPSInfoTile
 import com.android.systemui.qs.tiles.AmbientDisplayTile
 import com.android.systemui.qs.tiles.AODTile
@@ -71,6 +72,12 @@ interface QSModuleCherish {
     @IntoMap
     @StringKey(WifiTile.TILE_SPEC)
     fun bindWifiTile(wifiTile: WifiTile): QSTileImpl<*>
+
+    /** Inject DataSwitchTile into tileMap in QSModule */
+    @Binds
+    @IntoMap
+    @StringKey(DataSwitchTile.TILE_SPEC)
+    fun bindDataSwitchTile(dataSwitchTile: DataSwitchTile): QSTileImpl<*>
 
     /** Inject HeadsUpTile into tileMap in QSModule */
     @Binds
@@ -183,6 +190,22 @@ interface QSModuleCherish {
                 category = TileCategory.CONNECTIVITY
             )
         }
+
+        @Provides
+        @IntoMap
+        @StringKey(DataSwitchTile.TILE_SPEC)
+        fun provideDataSwitchConfig(uiEventLogger: QsEventLogger): QSTileConfig {
+            return QSTileConfig(
+                tileSpec = TileSpec.create(DataSwitchTile.TILE_SPEC),
+                uiConfig = QSTileUIConfig.Resource(
+                    iconRes = R.drawable.ic_qs_data_switch_0,
+                    labelRes = R.string.qs_data_switch_label
+                ),
+                instanceId = uiEventLogger.getNewInstanceId(),
+                category = TileCategory.CONNECTIVITY
+            )
+        }
+
         @Provides
         @IntoMap
         @StringKey(HeadsUpTile.TILE_SPEC)
