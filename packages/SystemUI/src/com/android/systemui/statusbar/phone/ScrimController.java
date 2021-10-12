@@ -30,6 +30,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.annotation.IntDef;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Handler;
 import android.util.Log;
@@ -52,6 +53,7 @@ import com.android.internal.util.function.TriConsumer;
 import com.android.keyguard.BouncerPanelExpansionCalculator;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.KeyguardUpdateMonitorCallback;
+import com.android.settingslib.Utils;
 import com.android.systemui.Dumpable;
 import com.android.systemui.Flags;
 import com.android.systemui.animation.ShadeInterpolation;
@@ -248,6 +250,7 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Dump
     private final KeyguardInteractor mKeyguardInteractor;
 
     private GradientColors mColors;
+    private GradientColors mBehindColors;
     private boolean mNeedsDrawableColorUpdate;
 
     private float mAdditionalScrimBehindAlphaKeyguard = 0f;
@@ -411,6 +414,7 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Dump
             }
         });
         mColors = new GradientColors();
+        mBehindColors = new GradientColors();
         mPrimaryBouncerToGoneTransitionViewModel = primaryBouncerToGoneTransitionViewModel;
         mAlternateBouncerToGoneTransitionViewModel = alternateBouncerToGoneTransitionViewModel;
         mKeyguardTransitionInteractor = keyguardTransitionInteractor;
@@ -1273,7 +1277,7 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Dump
                     && !mBlankScreen;
 
             mScrimInFront.setColors(mColors, animateScrimInFront);
-            mScrimBehind.setColors(mColors, animateBehindScrim);
+            mScrimBehind.setColors(mBehindColors, animateBehindScrim);
             mNotificationsScrim.setColors(mColors, animateScrimNotifications);
 
             dispatchBackScrimState(mScrimBehind.getViewAlpha());
@@ -1631,6 +1635,16 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Dump
                 com.android.internal.R.color.materialColorSurfaceDim);
         int accent = mContext.getColor(
                 com.android.internal.R.color.materialColorPrimary);
+        int nightModeFlags = mContext.getResources().getConfiguration().uiMode
+                & Configuration.UI_MODE_NIGHT_MASK;
+
+        int surfaceBackground;
+        if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
+            surfaceBackground = mContext.getColor(com.google.android.material.R.color.material_dynamic_neutral0);
+        } else {
+            surfaceBackground = mContext.getColor(com.google.android.material.R.color.material_dynamic_neutral80);
+        }
+
         mColors.setMainColor(background);
         mColors.setSecondaryColor(accent);
         final boolean isBackgroundLight = !ContrastColorUtil.isColorDark(background);
@@ -1641,6 +1655,11 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Dump
         for (ScrimState state : ScrimState.values()) {
             state.setSurfaceColor(surface);
         }
+
+        mBehindColors.setMainColor(surfaceBackground);
+        mBehindColors.setSecondaryColor(accent);
+        final boolean isSurfaceBackgroundLight = !ContrastColorUtil.isColorDark(surfaceBackground);
+        mBehindColors.setSupportsDarkText(isSurfaceBackgroundLight);
 
         mNeedsDrawableColorUpdate = true;
     }
