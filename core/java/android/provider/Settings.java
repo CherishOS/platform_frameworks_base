@@ -20065,6 +20065,14 @@ public final class Settings {
                 "hearing_device_local_notification";
 
         /**
+         * A list of uids that are allowed to use restricted networks.
+         *
+         * @hide
+         */
+        public static final String UIDS_ALLOWED_ON_RESTRICTED_NETWORKS =
+                "uids_allowed_on_restricted_networks";
+
+        /**
          * Global settings that shouldn't be persisted.
          *
          * @hide
