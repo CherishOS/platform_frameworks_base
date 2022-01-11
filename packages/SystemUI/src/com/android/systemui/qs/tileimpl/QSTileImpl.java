@@ -39,6 +39,7 @@ import android.metrics.LogMaker;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.provider.Settings;
 import android.text.format.DateUtils;
 import android.util.ArraySet;
 import android.util.Log;
@@ -71,6 +72,7 @@ import com.android.systemui.qs.QsEventLogger;
 import com.android.systemui.qs.SideLabelTileLayout;
 import com.android.systemui.qs.flags.QsInCompose;
 import com.android.systemui.qs.logging.QSLogger;
+import com.android.systemui.statusbar.policy.KeyguardStateController;
 
 import java.io.PrintWriter;
 import java.util.Objects;
@@ -276,6 +278,34 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
      */
     public boolean isAvailable() {
         return true;
+    }
+
+    public enum Action {
+        CLICK,
+        SECONDARY_CLICK,
+        LONG_CLICK,
+    }
+
+    public boolean isAllowedWhenLocked(Action action) {
+        boolean allowed = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.SECURE_LOCKSCREEN_QS_DISABLED, 1) == 0;
+        return allowed;
+    }
+
+    void handleAction(Action action, Runnable handler) {
+        if (isAllowedWhenLocked(action)) {
+            handler.run();
+            return;
+        }
+
+        KeyguardStateController ksc = mHost.getKeyguardStateController();
+        boolean hasSecureKeyguard = ksc.isMethodSecure() && ksc.isShowing();
+
+        if (hasSecureKeyguard) {
+            mActivityStarter.postQSRunnableDismissingKeyguard(handler);
+        } else {
+            handler.run();
+        }
     }
 
     // safe to call from any thread
@@ -635,16 +665,19 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
                         mActivityStarter.postStartActivityDismissingKeyguard(intent, 0);
                     } else {
                         mQSLogger.logHandleClick(mTileSpec, msg.arg1);
-                        handleClick((Expandable) msg.obj);
+                        Expandable expandable = (Expandable) msg.obj;
+                        handleAction(Action.CLICK, () -> handleClick(expandable));
                     }
                 } else if (msg.what == SECONDARY_CLICK) {
                     name = "handleSecondaryClick";
                     mQSLogger.logHandleSecondaryClick(mTileSpec, msg.arg1);
-                    handleSecondaryClick((Expandable) msg.obj);
+                    Expandable expandable = (Expandable) msg.obj;
+                    handleAction(Action.SECONDARY_CLICK, () -> handleSecondaryClick(expandable));
                 } else if (msg.what == LONG_CLICK) {
                     name = "handleLongClick";
                     mQSLogger.logHandleLongClick(mTileSpec, msg.arg1);
-                    handleLongClick((Expandable) msg.obj);
+                    Expandable expandable = (Expandable) msg.obj;
+                    handleAction(Action.LONG_CLICK, () -> handleLongClick(expandable));
                 } else if (msg.what == REFRESH_STATE) {
                     name = "handleRefreshState";
                     handleRefreshState(msg.obj);
