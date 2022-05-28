@@ -996,7 +996,7 @@ public class NotificationStackScrollLayout
 
         final int innerWidth = viewWidth - mMinimumPaddings * 2;
         final int qsTileWidth = (innerWidth - mQsTilePadding * (mQsTileColumns - 1)) / mQsTileColumns;
-        mSidePaddings = mMinimumPaddings + qsTileWidth + mQsTilePadding;
+        mSidePaddings = mMinimumPaddings;
     }
 
     void updateCornerRadius() {
