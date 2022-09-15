@@ -370,6 +370,7 @@ constructor(
             override fun onUiModeChanged() {
                 updateShadeHeaderColors()
                 updateQsBatteryStyle()
+                updateResources()
             }
         }
 
@@ -480,6 +481,7 @@ constructor(
         demoModeController.addCallback(demoModeReceiver)
         statusBarIconController.addIconGroup(iconManager)
         nextAlarmController.addCallback(nextAlarmCallback)
+        updateResources()
         systemIconsHoverContainer.setOnHoverListener(
             statusOverlayHoverListenerFactory.createListener(systemIconsHoverContainer)
         )
@@ -715,6 +717,19 @@ constructor(
         header.setPadding(padding, header.paddingTop, padding, header.paddingBottom)
         updateQQSPaddings()
         clock.updateClockSize()
+
+        val textColorPrimary = Utils.getColorAttrDefaultColor(context, android.R.attr.textColorPrimary)
+        val colorStateList = Utils.getColorAttr(context, android.R.attr.textColorPrimary)
+        val textColorSecondary = Utils.getColorAttrDefaultColor(context,
+                android.R.attr.textColorSecondary)
+        iconManager.setTint(
+            textColorPrimary,
+            Utils.getColorAttrDefaultColor(context, android.R.attr.textColorPrimaryInverse),
+        )
+        clock.setTextColor(textColorPrimary)
+        date.setTextColor(textColorPrimary)
+        mShadeCarrierGroup.updateColors(textColorPrimary, colorStateList)
+        batteryIcon.updateColors(textColorPrimary, textColorSecondary, textColorPrimary)
     }
 
     private fun updateQQSPaddings() {
