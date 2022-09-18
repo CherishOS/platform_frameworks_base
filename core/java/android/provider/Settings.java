@@ -21145,6 +21145,12 @@ public final class Settings {
         public static final String HIDE_SCREEN_CAPTURE_STATUS = "hide_screen_capture_status";
 
         /**
+         * Control whether to remove the restriction when selecting folders through SAF.
+         * @hide
+         */
+        public static final String NO_STORAGE_RESTRICT = "no_storage_restrict";
+
+        /**
          * The time in ms to keep the button backlight on after pressing a button.
          * A value of 0 will keep the buttons on for as long as the screen is on.
          * @hide
