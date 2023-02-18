@@ -692,6 +692,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private boolean mKeyguardOccludedChanged;
 
     boolean mMenuPressed;
+    boolean mAssistPressed;
     boolean mAppSwitchLongPressed;
     Intent mHomeIntent;
     Intent mCarDockIntent;
@@ -1723,8 +1724,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     KEYCODE_BACK, 0, 0, KeyCharacterMap.VIRTUAL_KEYBOARD, 0,
                     KeyEvent.FLAG_FROM_SYSTEM, InputDevice.SOURCE_KEYBOARD);
 
-            performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, false,
-                    "Back - Long Press");
+            performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, "Back - Long Press");
             performKeyAction(mBackLongPressAction, event);
         }
     }
@@ -2411,8 +2411,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                         cancelPreloadRecentApps();
                     }
                     mHomePressed = true;
-                    performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, false,
-                            "Home - Long Press");
+                    performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, "Home - Long Press");
                     // If long press home will launch assistant,
                     // it should pass this right invocation type.
                     performKeyAction(mHomeLongPressAction, event,
@@ -4050,7 +4049,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     mMenuPressed = false;
                     if (!canceled) {
                         performKeyAction(mMenuPressAction, event);
-                    }Add commentMore actions
+                    }
                 }
 
                 return true;
@@ -4090,7 +4089,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                             }
                             if (!canceled) {
                                 performKeyAction(mAppSwitchPressAction, event);
-                            }Add commentMore actions
+                            }
                         }
                     }
                 }
@@ -4297,7 +4296,38 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 }
                 break;
             case KeyEvent.KEYCODE_ASSIST:
-                Slog.wtf(TAG, "KEYCODE_ASSIST should be handled in interceptKeyBeforeQueueing");
+                if (keyguardOn) {
+                    break;
+                }
+                if (down) {
+                    if (mAssistPressAction == Action.APP_SWITCH
+                            || mAssistLongPressAction == Action.APP_SWITCH) {
+                        preloadRecentApps();
+                    }
+                    if (repeatCount == 0) {
+                        mAssistPressed = true;
+                    } else if (longPress) {
+                        if (mAssistLongPressAction != Action.NOTHING) {
+                            if (mAssistLongPressAction != Action.APP_SWITCH) {
+                                cancelPreloadRecentApps();
+                            }
+                            performHapticFeedback(HapticFeedbackConstants.LONG_PRESS,
+                                    "Assist - Long Press");
+                            performKeyAction(mAssistLongPressAction, event);
+                            mAssistPressed = false;
+                        }
+                    }
+                } else {
+                    if (mAssistPressed) {
+                        if (mAssistPressAction != Action.APP_SWITCH) {
+                            cancelPreloadRecentApps();
+                        }
+                        mAssistPressed = false;
+                        if (!canceled) {
+                            performKeyAction(mAssistPressAction, event);
+                        }
+                    }
+                }
                 return true;
             case KeyEvent.KEYCODE_VOICE_ASSIST:
                 Slog.wtf(TAG, "KEYCODE_VOICE_ASSIST should be handled in"
@@ -4580,7 +4610,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             return false;
         }
 
-        // Specific device key handlingAdd commentMore actions
+        // Specific device key handling
         if (dispatchKeyToKeyHandlers(event)) {
             return true;
         }
@@ -5851,7 +5881,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                                 : KeyGestureEvent.KEY_GESTURE_TYPE_VOLUME_MUTE;
                 notifyKeyGestureCompletedOnActionDown(event, gestureType);
 
-                // Eat all down & up keys when using volume wake.Add commentMore actions
+                // Eat all down & up keys when using volume wake.
                 // This disables volume control, music control, and "beep" on key up.
                 if (isWakeKey && mWakeOnVolumeKeyPress) {
                     setVolumeWakeTriggered(keyCode, true);
@@ -6160,30 +6190,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 break;
             }
             case KeyEvent.KEYCODE_ASSIST: {
-                final boolean longPressed = event.getRepeatCount() > 0;
-                if (down && (mAssistPressAction == Action.APP_SWITCH
-                        || mAssistLongPressAction == Action.APP_SWITCH)) {
-                    preloadRecentApps();
-                }
-                if (down && longPressed) {
-                    if (!keyguardOn() && mAssistLongPressAction != Action.NOTHING) {
-                        if (mAssistLongPressAction != Action.APP_SWITCH) {
-                            cancelPreloadRecentApps();
-                        }
-                        performHapticFeedback(HapticFeedbackConstants.LONG_PRESS,
-                            "Assist - Long Press");
-                        performKeyAction(mAssistLongPressAction, event);
+                if (down && !interactive) {
+                    isWakeKey = mWakeOnAssistKeyPress;
+                    if (!isWakeKey) {
+                        useHapticFeedback = false;
                     }
                 }
-                if (!down && !longPressed) {
-                    if (mAssistPressAction != Action.APP_SWITCH) {
-                        cancelPreloadRecentApps();
-                    }
-                    if (!canceled) {
-                        performKeyAction(mAssistPressAction, event);
-                    }
-                }
-                result &= ~ACTION_PASS_TO_USER;
                 break;
             }
             case KeyEvent.KEYCODE_VOICE_ASSIST: {
