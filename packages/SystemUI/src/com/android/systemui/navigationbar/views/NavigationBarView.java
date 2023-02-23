@@ -321,9 +321,9 @@ public class NavigationBarView extends FrameLayout implements
                 new ContextualButton(R.id.accessibility_button, mLightContext,
                         R.drawable.ic_sysbar_accessibility_button);
         final ContextualButton cursorLeftButton = new ContextualButton(R.id.dpad_left,
-                mLightContext, R.drawable.ic_chevron_start);
+                mLightContext, R.drawable.ic_chevron_left);
         final ContextualButton cursorRightButton = new ContextualButton(R.id.dpad_right,
-                mLightContext, R.drawable.ic_chevron_end);
+                mLightContext, R.drawable.ic_chevron_right);
         mContextualButtonGroup.addButton(imeSwitcherButton);
         mContextualButtonGroup.addButton(accessibilityButton);
         mFloatingRotationButton = new FloatingRotationButton(mContext,
@@ -509,8 +509,8 @@ public class NavigationBarView extends FrameLayout implements
         }
         if (densityChange || dirChange) {
             mRecentIcon = getDrawable(R.drawable.ic_sysbar_recent);
-            mCursorLeftIcon = getDrawable(R.drawable.ic_chevron_start);
-            mCursorRightIcon = getDrawable(R.drawable.ic_chevron_end);
+            mCursorLeftIcon = getDrawable(R.drawable.ic_chevron_left);
+            mCursorRightIcon = getDrawable(R.drawable.ic_chevron_right);
             mContextualButtonGroup.updateIcons(mLightIconColor, mDarkIconColor);
         }
         if (orientationChange || densityChange || dirChange) {
@@ -616,7 +616,7 @@ public class NavigationBarView extends FrameLayout implements
         if (!isBackDismissIme) {
             mTransitionListener.onBackDismissImeCleared();
         }
-        mImeVisible = visible;
+        mImeVisible = isBackDismissIme;
     }
 
     void setDisabledFlags(int disabledFlags, SysUiState sysUiState) {
@@ -662,7 +662,7 @@ public class NavigationBarView extends FrameLayout implements
                         && !isImeRenderingNavButtons();
         mContextualButtonGroup.setButtonVisibility(R.id.ime_switcher, isImeSwitcherButtonVisible);
 
-        boolean disableCursorKeys = !mShowCursorKeys || !useAltBack ||
+        boolean disableCursorKeys = !mShowCursorKeys || !isBackDismissIme ||
                 (QuickStepContract.isGesturalMode(mNavBarMode) && mImeVisible);
 
         mBarTransitions.reapplyDarkIntensity();
@@ -1179,7 +1179,7 @@ public class NavigationBarView extends FrameLayout implements
     public void onTuningChanged(String key, String newValue) {
         if (NAVIGATION_BAR_MENU_ARROW_KEYS.equals(key)) {
             mShowCursorKeys = TunerService.parseIntegerSwitch(newValue, false);
-            setNavigationIconHints(mNavigationIconHints);
+            setNavbarFlags(mNavbarFlags);
         }
     }
 
