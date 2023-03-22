@@ -124,6 +124,7 @@ public class HeadsUpManagerImpl
     private final int mStickyForSomeTimeAutoDismissTime;
     private final int mAutoDismissTime;
     private final DelayableExecutor mExecutor;
+    private boolean mDozing;
 
     private final int mExtensionTime;
 
@@ -1257,6 +1258,7 @@ public class HeadsUpManagerImpl
 
         @Override
         public void onDozingChanged(boolean isDozing) {
+            mDozing = isDozing;
             if (!isDozing) {
                 // Let's make sure all huns we got while dozing time out within the normal timeout
                 // duration. Otherwise they could get stuck for a very long time
@@ -1433,7 +1435,8 @@ public class HeadsUpManagerImpl
 
             FinishTimeUpdater finishTimeCalculator = () -> {
                 RemainingDuration remainingDuration =
-                        mAvalancheController.getDuration(this, mAutoDismissTime);
+                        mAvalancheController.getDuration(this,
+                        mDozing ? mDecayDefault * 1000 : mAutoDismissTime);
 
                 if (remainingDuration instanceof RemainingDuration.HideImmediately) {
                     /* Check if */ StatusBarNotifChips.isUnexpectedlyInLegacyMode();
