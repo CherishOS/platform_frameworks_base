@@ -422,6 +422,7 @@ android_library {
         "res",
     ],
     static_libs: [
+        "CherishCore",
         "SystemUISharedLib",
         "SystemUICustomizationLib",
         "SettingsLib",
@@ -464,6 +465,7 @@ android_library {
     use_resource_processor: true,
     resource_dirs: [],
     static_libs: [
+        "CherishCore",
         "//frameworks/libs/systemui:compilelib",
         "com.android.systemui.dagger-api",
         "com.android.systemui.util.settings-api",
@@ -575,6 +577,18 @@ android_library {
 platform_compat_config {
     name: "SystemUI-core-compat-config",
     src: ":SystemUI-core",
+}
+
+java_import {
+    name: "CherishCore",
+    sdk_version: "current",
+    jars: [
+        "libs/kotlin_p.jar",
+        "libs/koltin_ab.jar",
+        "libs/core-3.0.1.jar",
+        "libs/koin-core-3.2.0.jar",
+        "libs/kotlinx-coroutines-core-1.6.4.jar",
+    ],
 }
 
 filegroup {
