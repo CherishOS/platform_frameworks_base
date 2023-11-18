@@ -7699,6 +7699,11 @@ public final class Settings {
         public static final String DEFAULT_MAX_ALARM_VOLUME = "default_max_alarm_volume";
 
         /**
+         * @hide
+         */
+        public static final String ISLAND_NOTIFICATION = "island_notification";
+
+        /**
          * Heads up timeout configuration
          * @hide
          */
