@@ -3839,6 +3839,7 @@
          "logout" =  Logout the current user
          "system_update" = Launch System Update screen
          "standby" = Bring the device to standby
+         "restart_systemui" = restart systemui
          -->
     <string-array translatable="false" name="config_globalActionsList">
         <item>emergency</item>
@@ -3848,6 +3849,7 @@
         <item>logout</item>
         <item>screenshot</item>
         <item>bugreport</item>
+        <item>restart_systemui</item>
     </string-array>
 
     <!-- Number of milliseconds to hold a wake lock to ensure that drawing is fully
