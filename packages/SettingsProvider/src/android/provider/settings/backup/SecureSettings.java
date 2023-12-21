@@ -306,6 +306,7 @@ public class SecureSettings {
         Settings.Secure.SELECTED_SPELL_CHECKER_SUBTYPE,
         Settings.Secure.TETHERING_ALLOW_VPN_UPSTREAMS,
         Settings.Secure.TORCH_DOUBLE_TAP_POWER_GESTURE_ENABLED,
-        Settings.Secure.TORCH_LONG_PRESS_POWER
+        Settings.Secure.TORCH_LONG_PRESS_POWER,
+        Settings.Secure.VPN_ENFORCE_DNS
     };
 }
