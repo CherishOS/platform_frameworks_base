@@ -2473,6 +2473,8 @@ class DatabaseHelper extends SQLiteOpenHelper {
             loadIntegerSetting(stmt, Settings.Global.TETHER_DUN_REQUIRED,
                     R.integer.def_tether_dun_required);
 
+            loadRestrictedNetworkingModeSetting(stmt);
+
             /*
              * IMPORTANT: Do not add any more upgrade steps here as the global,
              * secure, and system settings are no longer stored in a database
@@ -2483,6 +2485,11 @@ class DatabaseHelper extends SQLiteOpenHelper {
         } finally {
             if (stmt != null) stmt.close();
         }
+    }
+
+    private void loadRestrictedNetworkingModeSetting(SQLiteStatement stmt) {
+        loadSetting(stmt, Settings.Global.RESTRICTED_NETWORKING_MODE, "1");
+        loadSetting(stmt, "uids_allowed_on_restricted_networks", "");
     }
 
     private void loadSetting(SQLiteStatement stmt, String key, Object value) {
