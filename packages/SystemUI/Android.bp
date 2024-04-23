@@ -548,7 +548,7 @@ android_library {
     additional_manifests: ["CherishManifest.xml"],
 
     javacflags: [
-        "-Adagger.fastInit=enabled",
+        // "-Adagger.fastInit=enabled",
         "-Adagger.explicitBindingConflictsWithInject=ERROR",
         "-Adagger.strictMultibindingValidation=enabled",
         "-Adagger.useBindingGraphFix=ENABLED",
