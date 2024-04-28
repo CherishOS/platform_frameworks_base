@@ -7189,6 +7189,14 @@ public final class Settings {
           */
          public static final String CLICK_PARTIAL_SCREENSHOT = "click_partial_screenshot";
 
+        /**
+         * Whether to unlimit screenrecord filesize
+         * Not for backup - dev option
+         * @hide
+         */
+        @Readable
+        public static final String UNLIMIT_SCREENRECORD = "unlimit_screenrecord";
+
 	/**
          * Whether to show or hide alert slider notifications on supported devices
          * @hide
