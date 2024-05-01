@@ -192,7 +192,7 @@ public final class StringBlock implements Closeable {
                 res = applyStyles(str, style, mStyleIDs);
             }
             if (res != null) {
-                if (mStrings != null) mStrings[idx] = res;
+                if (mStrings != null && idx < mStrings.length) mStrings[idx] = res;
                 else mSparseStrings.put(idx, res);
             }
             return res;
