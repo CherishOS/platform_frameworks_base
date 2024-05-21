@@ -21139,6 +21139,12 @@ public final class Settings {
         public static final String PM_DOWNGRADE_ALLOWED = "pm_downgrade_allowed";
 
         /**
+         * Control whether to hide screen capture status from apps.
+         * @hide
+         */
+        public static final String HIDE_SCREEN_CAPTURE_STATUS = "hide_screen_capture_status";
+
+        /**
          * The time in ms to keep the button backlight on after pressing a button.
          * A value of 0 will keep the buttons on for as long as the screen is on.
          * @hide
