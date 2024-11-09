@@ -7232,13 +7232,13 @@ public final class Settings {
         public static final String STATUS_BAR_BRIGHTNESS_CONTROL = "status_bar_brightness_control";
 
         /**
-         * Network traffic indicator location
+         * Network traffic indicator
          * 0 = Disabled
-         * 1 = Statusbar
-         * 2 = Quick statusbar
+         * 1 = Enabled
          * @hide
          */
-        public static final String NETWORK_TRAFFIC_LOCATION = "network_traffic_location";
+        public static final String NETWORK_TRAFFIC_ENABLED = "network_traffic_enabled";
+
         /**
          * Network traffic indicator mode
          * 0 = Display both up- and down-stream traffic
@@ -7247,26 +7247,31 @@ public final class Settings {
          * @hide
          */
         public static final String NETWORK_TRAFFIC_MODE = "network_traffic_mode";
+
         /**
          * Whether or not to hide the network traffic indicator when there is no activity
          * @hide
          */
         public static final String NETWORK_TRAFFIC_AUTOHIDE = "network_traffic_autohide";
+
         /**
          * Threshold below which network traffic would be hidden
          * @hide
          */
         public static final String NETWORK_TRAFFIC_AUTOHIDE_THRESHOLD = "network_traffic_autohide_threshold";
+
         /**
          * Measurement unit preference for network traffic
          * @hide
          */
         public static final String NETWORK_TRAFFIC_UNITS = "network_traffic_units";
+
         /**
          * Specify refresh duration for network traffic
          * @hide
          */
         public static final String NETWORK_TRAFFIC_REFRESH_INTERVAL = "network_traffic_refresh_interval";
+
         /**
          * Whether to hide arrows for network traffic
          * @hide
