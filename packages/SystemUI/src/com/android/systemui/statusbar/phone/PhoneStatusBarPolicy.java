@@ -115,8 +115,8 @@ public class PhoneStatusBarPolicy
 
     private static final String BLUETOOTH_SHOW_BATTERY =
             "system:" + Settings.System.BLUETOOTH_SHOW_BATTERY;
-    private static final String NETWORK_TRAFFIC_LOCATION =
-            "system:" + Settings.System.NETWORK_TRAFFIC_LOCATION;
+    private static final String NETWORK_TRAFFIC_ENABLED =
+            "system:" + Settings.System.NETWORK_TRAFFIC_ENABLED;
 
     private final String mSlotCast;
     private final String mSlotHotspot;
@@ -363,8 +363,8 @@ public class PhoneStatusBarPolicy
         updateNfc();
 
         // network traffic
-        mShowNetworkTraffic = Settings.Secure.getIntForUser(mContext.getContentResolver(),
-            NETWORK_TRAFFIC_LOCATION, 0, UserHandle.USER_CURRENT) == 1;
+        mShowNetworkTraffic = Settings.System.getIntForUser(mContext.getContentResolver(),
+            NETWORK_TRAFFIC_ENABLED, 0, UserHandle.USER_CURRENT) == 1;
         updateNetworkTraffic();
 
         // firewall
@@ -393,6 +393,7 @@ public class PhoneStatusBarPolicy
         mCommandQueue.addCallback(this);
 
         mTunerService.addTunable(this, BLUETOOTH_SHOW_BATTERY);
+        mTunerService.addTunable(this, NETWORK_TRAFFIC_ENABLED);
 
         // Get initial user setup state
         onUserSetupChanged();
@@ -450,9 +451,9 @@ public class PhoneStatusBarPolicy
                         TunerService.parseIntegerSwitch(newValue, true);
                 updateBluetooth();
                 break;
-            case NETWORK_TRAFFIC_LOCATION:
+            case NETWORK_TRAFFIC_ENABLED:
                 mShowNetworkTraffic =
-                        TunerService.parseInteger(newValue, 0) == 1;
+                        TunerService.parseIntegerSwitch(newValue, false);
                 updateNetworkTraffic();
                 break;
             default:
