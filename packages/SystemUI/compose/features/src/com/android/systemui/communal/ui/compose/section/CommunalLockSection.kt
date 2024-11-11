@@ -40,6 +40,7 @@ import com.android.systemui.keyguard.ui.view.DeviceEntryIconView
 import com.android.systemui.log.LogBuffer
 import com.android.systemui.log.TouchHandlingViewLogger
 import com.android.systemui.log.dagger.LongPressTouchLog
+import com.android.systemui.tuner.TunerService
 import com.android.systemui.plugins.FalsingManager
 import com.android.systemui.res.R
 import com.android.systemui.statusbar.VibratorHelper
@@ -57,6 +58,7 @@ constructor(
     private val falsingManager: Lazy<FalsingManager>,
     private val vibratorHelper: Lazy<VibratorHelper>,
     private val featureFlags: FeatureFlagsClassic,
+    private val tunerService: TunerService,
     @LongPressTouchLog private val logBuffer: LogBuffer,
 ) {
     @Composable
@@ -68,7 +70,9 @@ constructor(
                 DeviceEntryIconView(
                         context,
                         null,
-                        logger = TouchHandlingViewLogger(logBuffer, tag = TAG),
+                        0,
+                        TouchHandlingViewLogger(logBuffer, tag = TAG),
+                        tunerService
                     )
                     .apply {
                         id = R.id.device_entry_icon_view
