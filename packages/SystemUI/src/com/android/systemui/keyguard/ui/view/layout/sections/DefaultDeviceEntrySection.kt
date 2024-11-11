@@ -48,6 +48,7 @@ import com.android.systemui.shade.NotificationPanelView
 import com.android.systemui.shade.ShadeDisplayAware
 import com.android.systemui.statusbar.VibratorHelper
 import com.google.android.msdl.domain.MSDLPlayer
+import com.android.systemui.tuner.TunerService
 import dagger.Lazy
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
@@ -73,6 +74,7 @@ constructor(
     private val msdlPlayer: Lazy<MSDLPlayer>,
     @LongPressTouchLog private val logBuffer: LogBuffer,
     @KeyguardBlueprintLog blueprintLogBuffer: LogBuffer,
+    private val tunerService: TunerService,
 ) : KeyguardSection() {
     private val blueprintLogger = Logger(blueprintLogBuffer, TAG)
     private val deviceEntryIconViewId = R.id.device_entry_icon_view
@@ -83,7 +85,9 @@ constructor(
             DeviceEntryIconView(
                     context,
                     null,
-                    logger = TouchHandlingViewLogger(logBuffer = logBuffer, TAG),
+                    0,
+                    TouchHandlingViewLogger(logBuffer = logBuffer, TAG),
+                    tunerService,
                 )
                 .apply { id = deviceEntryIconViewId }
 
