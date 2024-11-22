@@ -63,13 +63,14 @@ import com.android.systemui.statusbar.CommandQueue.Callbacks;
 import com.android.systemui.statusbar.phone.CentralSurfacesImpl;
 import com.android.systemui.statusbar.policy.ConfigurationController;
 import com.android.systemui.media.NotificationMediaManager;
+import com.android.systemui.util.MediaSessionManagerHelper;
 
 import java.util.concurrent.Executor;
 
 @SysUISingleton
 public class PulseControllerImpl implements
         NotificationMediaManager.MediaListener,
-        CommandQueue.Callbacks {
+        CommandQueue.Callbacks, MediaSessionManagerHelper.MediaMetadataListener {
 
     public static final boolean DEBUG = false;
 
@@ -87,6 +88,7 @@ public class PulseControllerImpl implements
     private int mPulseStyle;
     private CentralSurfacesImpl mStatusbar;
     private final PowerManager mPowerManager;
+    private final MediaSessionManagerHelper mMediaSessionManagerHelper;
 
     // Pulse state
     private boolean mLinked;
@@ -298,6 +300,7 @@ public class PulseControllerImpl implements
         filter.addAction(AudioManager.STREAM_MUTE_CHANGED_ACTION);
         filter.addAction(AudioManager.VOLUME_CHANGED_ACTION);
         context.registerReceiver(mBroadcastReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+        mMediaSessionManagerHelper = MediaSessionManagerHelper.Companion.getInstance(mContext);
     }
 
     private void attachPulseTo(FrameLayout parent) {
@@ -309,6 +312,7 @@ public class PulseControllerImpl implements
             log("attachPulseTo() ");
             doLinkage();
         }
+        mMediaSessionManagerHelper.addMediaMetadataListener(this);
     }
 
     private void detachPulseFrom(FrameLayout parent, boolean keepLinked) {
@@ -320,6 +324,7 @@ public class PulseControllerImpl implements
             log("detachPulseFrom() ");
             doLinkage();
         }
+        mMediaSessionManagerHelper.removeMediaMetadataListener(this);
     }
 
     private void loadRenderer() {
@@ -514,8 +519,8 @@ public class PulseControllerImpl implements
     }
 
     @Override
-    public void setMediaNotificationColor(int color) {
-        mColorController.setMediaNotificationColor(color);
+    public void onMediaColorsChanged() {
+        mColorController.setMediaNotificationColor(mMediaSessionManagerHelper.getMediaColor());
     }
 
     @Override
