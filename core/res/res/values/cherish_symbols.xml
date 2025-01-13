@@ -119,18 +119,6 @@
     <!-- KeyboxImitationHooks -->
     <java-symbol type="array" name="config_certifiedKeybox" />
 
-    <!-- Landscape Battery -->
-    <java-symbol type="string" name="config_batterymeterRLandPerimeterPath" />
-    <java-symbol type="string" name="config_batterymeterRLandFillMask" />
-    <java-symbol type="string" name="config_batterymeterRLandBoltPath" />
-    <java-symbol type="string" name="config_batterymeterRLandPowersavePath" />
-    <java-symbol type="string" name="config_batterymeterRLandErrorPerimeterPath" />
-    <java-symbol type="string" name="config_batterymeterLandPerimeterPath" />
-    <java-symbol type="string" name="config_batterymeterLandFillMask" />
-    <java-symbol type="string" name="config_batterymeterLandBoltPath" />
-    <java-symbol type="string" name="config_batterymeterLandPowersavePath" />
-    <java-symbol type="string" name="config_batterymeterLandErrorPerimeterPath" />
-
     <!-- More battery styles -->
     <java-symbol type="string" name="config_batterymeterLandPerimeterPathBuddy" />
     <java-symbol type="string" name="config_batterymeterLandFillMaskBuddy" />
