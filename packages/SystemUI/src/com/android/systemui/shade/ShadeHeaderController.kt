@@ -362,10 +362,14 @@ constructor(
             override fun onThemeChanged() {
                 updateShadeHeaderColors()
                 updateQsHeaderClockDateVisibility()
+                updateResources()
+                updateQsHeaderClockDateVisibility()
+                
             }
             
             override fun onUiModeChanged() {
                 updateShadeHeaderColors()
+                updateQsBatteryStyle()
             }
         }
 
@@ -409,10 +413,12 @@ constructor(
     }
     
     fun updateQsHeaderClockDateVisibility() {
-        val color = if (qsClockStyle != 0) Color.TRANSPARENT else Color.WHITE
-        val colorStateList = ColorStateList.valueOf(color)
-        clock.setTextColor(colorStateList)
-        date.setTextColor(colorStateList)
+        if (qsClockStyle != 0) {
+            val color = Color.TRANSPARENT
+            val colorStateList = ColorStateList.valueOf(color)
+            clock.setTextColor(colorStateList)
+            date.setTextColor(colorStateList)
+        }  
     }
 
     override fun onInit() {
