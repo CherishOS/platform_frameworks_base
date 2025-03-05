@@ -131,6 +131,8 @@ public class Clock extends TextView implements
     private boolean mClockVisibleByPolicy = true;
     private boolean mClockVisibleByUser = getVisibility() == View.VISIBLE;
     private boolean mClockBgOn;
+    private boolean mClockBgStyleIsTwo;
+    private boolean mClockBgStyleIsEight;
 
     private boolean mAttached;
     private boolean mScreenReceiverRegistered;
@@ -503,8 +505,10 @@ public class Clock extends TextView implements
                         TunerService.parseInteger(newValue, SHOW_DURATION);
                 break;
             case STATUSBAR_CLOCK_CHIP:
-                mClockBgOn =
-                        TunerService.parseIntegerSwitch(newValue, false);
+                int sbClockBgStyle = TunerService.parseInteger(newValue, 0);
+                mClockBgOn = sbClockBgStyle != 0;
+                mClockBgStyleIsTwo = sbClockBgStyle == 2;
+                mClockBgStyleIsEight = sbClockBgStyle == 8;
                 break;
             case STATUS_BAR_CLOCK_SIZE:
                 mClockSize =
@@ -544,7 +548,7 @@ public class Clock extends TextView implements
     @Override
     public void onDarkChanged(ArrayList<Rect> areas, float darkIntensity, int tint) {
         mNonAdaptedColor = DarkIconDispatcher.getTint(areas, this, tint);
-        setTextColor(mClockBgOn ? Color.WHITE : mNonAdaptedColor);
+        setTextColor(mClockBgOn && !mClockBgStyleIsTwo && !mClockBgStyleIsEight ? Color.WHITE : mNonAdaptedColor);
     }
 
     // Update text color based when shade scrim changes color.
