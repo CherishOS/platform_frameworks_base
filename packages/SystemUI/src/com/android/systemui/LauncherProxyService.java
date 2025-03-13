@@ -77,6 +77,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.accessibility.AccessibilityManager;
 import android.view.inputmethod.InputMethodManager;
 
@@ -366,6 +367,19 @@ public class LauncherProxyService implements CallbackController<LauncherProxyLis
                     });
         }
 
+        public void injectLongPress(int keyCode) throws RemoteException {
+            final int displayId = mContext.getDisplayId();
+            verifyCallerAndClearCallingIdentityPostMain("longPressInjected", () -> {
+                sendEvent(KeyEvent.ACTION_DOWN, keyCode, displayId, 0, 0);
+                mHandler.postDelayed(() -> {
+                    sendEvent(KeyEvent.ACTION_DOWN, keyCode, displayId, 1,
+                            KeyEvent.FLAG_LONG_PRESS);
+                    sendEvent(KeyEvent.ACTION_UP, keyCode, displayId, 0,
+                            KeyEvent.FLAG_CANCELED);
+                }, ViewConfiguration.getLongPressTimeout());
+            });
+        }
+
         @Override
         public void onImeSwitcherPressed() {
             // TODO(b/204901476) We're intentionally using the default display for now since
@@ -417,15 +431,19 @@ public class LauncherProxyService implements CallbackController<LauncherProxyLis
                     onRecentsButtonPositionChanged(position));
         }
 
-        private boolean sendEvent(int action, int code, int displayId) {
+        private boolean sendEvent(int action, int code, int displayId, int repeat, int flags) {
             long when = SystemClock.uptimeMillis();
-            final KeyEvent ev = new KeyEvent(when, when, action, code, 0 /* repeat */,
+            final KeyEvent ev = new KeyEvent(when, when, action, code, repeat,
                     0 /* metaState */, KeyCharacterMap.VIRTUAL_KEYBOARD, 0 /* scancode */,
-                    KeyEvent.FLAG_FROM_SYSTEM | KeyEvent.FLAG_VIRTUAL_HARD_KEY,
+                    flags | KeyEvent.FLAG_FROM_SYSTEM | KeyEvent.FLAG_VIRTUAL_HARD_KEY,
                     InputDevice.SOURCE_KEYBOARD);
             ev.setDisplayId(displayId);
             return InputManagerGlobal.getInstance()
                     .injectInputEvent(ev, InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
+        }
+
+        private boolean sendEvent(int action, int code, int displayId) {
+            return sendEvent(action, code, displayId, 0, 0);
         }
 
         @Override
