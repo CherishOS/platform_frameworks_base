@@ -1618,7 +1618,9 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
                     mPrevExpansionState = mExpansionState;
                     mExpansionState = ExpansionState.COLLAPSED;
                     updateRowsH(mDefaultRow, false);
-                    mExpandRows.setExpanded(false);
+                    if (mExpandRows != null) {
+                        mExpandRows.setExpanded(false);
+                    }
                 }
                 mPrevExpansionState = mExpansionState;
                 mExpansionState = mPrevExpansionState == ExpansionState.APPS_EXPANDED
@@ -2135,10 +2137,8 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
             trimObsoleteH();
         }
 
-        final boolean expanded = mExpansionState == ExpansionState.EXPANDED
-                || mPrevExpansionState == ExpansionState.EXPANDED;
-        final boolean appsExpanded = mExpansionState == ExpansionState.APPS_EXPANDED
-                || mPrevExpansionState == ExpansionState.APPS_EXPANDED;
+        final boolean expanded = mExpansionState == ExpansionState.EXPANDED;
+        final boolean appsExpanded = mExpansionState == ExpansionState.APPS_EXPANDED;
         final boolean collapsed = mExpansionState == ExpansionState.COLLAPSED;
 
         final boolean isOutmostIndexMax = isWindowGravityLeft() ? isRtl() : !isRtl();
