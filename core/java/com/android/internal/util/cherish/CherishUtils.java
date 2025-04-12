@@ -24,6 +24,12 @@ import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.IActivityManager;
 import android.content.Context;
+import android.content.Intent;
+import android.content.om.OverlayManager;
+import android.content.om.OverlayManagerTransaction;
+import android.content.om.OverlayIdentifier;
+import android.content.om.OverlayInfo;
+import android.content.om.IOverlayManager;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.content.pm.PackageInfo;
@@ -66,6 +72,7 @@ import android.view.InputDevice;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.Surface;
+import android.util.Log;
 
 import java.lang.ref.WeakReference;
 import com.android.internal.R;
@@ -82,6 +89,47 @@ public class CherishUtils {
     private static final int NO_CUTOUT = -1;
 
     private static OverlayManager mOverlayService;
+
+    public static void toggleOverlay(Context context, String overlayName, boolean enable) {
+        OverlayManager overlayManager = context.getSystemService(OverlayManager.class);
+        if (overlayManager == null) {
+            Log.e(TAG, "OverlayManager is not available");
+            return;
+        }
+
+        OverlayIdentifier overlayId = getOverlayID(overlayManager, overlayName);
+        if (overlayId == null) {
+            Log.e(TAG, "Overlay ID not found for " + overlayName);
+            return;
+        }
+
+        OverlayManagerTransaction.Builder transaction = new OverlayManagerTransaction.Builder();
+        transaction.setEnabled(overlayId, enable, UserHandle.USER_CURRENT);
+
+        try {
+            overlayManager.commit(transaction.build());
+        } catch (Exception e) {
+            Log.e(TAG, "Error toggling overlay", e);
+        }
+    }
+
+    private static OverlayIdentifier getOverlayID(OverlayManager overlayManager, String name) {
+        try {
+            if (name.contains(":")) {
+                String[] parts = name.split(":");
+                List<OverlayInfo> infos = overlayManager.getOverlayInfosForTarget(parts[0], UserHandle.CURRENT);
+                for (OverlayInfo info : infos) {
+                    if (parts[1].equals(info.getOverlayName())) return info.getOverlayIdentifier();
+                }
+            } else {
+                OverlayInfo info = overlayManager.getOverlayInfo(name, UserHandle.CURRENT);
+                if (info != null) return info.getOverlayIdentifier();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error retrieving overlay ID", e);
+        }
+        return null;
+    }
 
     public static void restartApp(String appName, Context context) {
         new RestartAppTask(appName, context).execute();
