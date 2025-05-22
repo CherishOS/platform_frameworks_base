@@ -43,6 +43,7 @@ import android.hardware.biometrics.BiometricFingerprintConstants;
 import android.hardware.biometrics.BiometricPrompt;
 import android.hardware.biometrics.BiometricSourceType;
 import android.hardware.biometrics.SensorProperties;
+import android.hardware.display.ColorDisplayManager;
 import android.hardware.display.DisplayManager;
 import android.hardware.fingerprint.FingerprintManager;
 import android.hardware.fingerprint.FingerprintSensorProperties;
@@ -243,6 +244,9 @@ public class UdfpsController implements DozeReceiver, Dumpable {
     private boolean mSmartPixelsEnabled;
     private boolean mSmartPixelsOnPowerSave;
 
+    private boolean mNightDisplayActivated;
+    private ColorDisplayManager mColorDisplayManager;
+
     @VisibleForTesting
     public static final VibrationAttributes UDFPS_VIBRATION_ATTRIBUTES =
             new VibrationAttributes.Builder()
@@ -342,6 +346,7 @@ public class UdfpsController implements DozeReceiver, Dumpable {
         @Override
         public void showUdfpsOverlay(long requestId, int sensorId, int reason,
                 @NonNull IUdfpsOverlayControllerCallback callback) {
+            maybeDisableNightMode();
             mUdfpsOverlayInteractor.setRequestId(requestId);
             mFgExecutor.execute(() -> UdfpsController.this.showUdfpsOverlay(
                     new UdfpsControllerOverlay(
@@ -381,6 +386,7 @@ public class UdfpsController implements DozeReceiver, Dumpable {
 
         @Override
         public void hideUdfpsOverlay(int sensorId) {
+            maybeRestoreNightMode();
             mFgExecutor.execute(() -> {
                 if (mKeyguardUpdateMonitor.isFingerprintDetectionRunning()) {
                     // if we get here, we expect keyguardUpdateMonitor's fingerprintRunningState
@@ -866,6 +872,7 @@ public class UdfpsController implements DozeReceiver, Dumpable {
             updateUdfpsAnimation();
             mConfigurationController.addCallback(mConfigurationListener);
         }
+        mColorDisplayManager = mContext.getSystemService(ColorDisplayManager.class);
     }
 
     private void updateUdfpsAnimation() {
@@ -917,6 +924,20 @@ public class UdfpsController implements DozeReceiver, Dumpable {
             Settings.System.putIntForUser(mContext.getContentResolver(),
                     Settings.System.SMART_PIXELS_ON_POWER_SAVE,
                     1, UserHandle.USER_CURRENT);
+        }
+    }
+
+
+    private void maybeDisableNightMode() {
+        mNightDisplayActivated = mColorDisplayManager.isNightDisplayActivated();
+        if (mNightDisplayActivated) {
+            mColorDisplayManager.setNightDisplayActivated(false);
+        }
+    }
+
+    private void maybeRestoreNightMode() {
+        if (mNightDisplayActivated) {
+            mColorDisplayManager.setNightDisplayActivated(true);
         }
     }
 
