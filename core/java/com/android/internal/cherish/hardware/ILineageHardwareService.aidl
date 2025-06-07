@@ -17,6 +17,9 @@
 
 package com.android.internal.cherish.hardware;
 
+import com.android.internal.cherish.hardware.DisplayMode;
+import com.android.internal.cherish.hardware.HSIC;
+
 /** @hide */
 interface ILineageHardwareService {
 
@@ -26,4 +29,23 @@ interface ILineageHardwareService {
 
     int[] getDisplayColorCalibration();
     boolean setDisplayColorCalibration(in int[] rgb);
+
+    boolean requireAdaptiveBacklightForSunlightEnhancement();
+
+    DisplayMode[] getDisplayModes();
+    DisplayMode getCurrentDisplayMode();
+    DisplayMode getDefaultDisplayMode();
+    boolean setDisplayMode(in DisplayMode mode, boolean makeDefault);
+
+    boolean isSunlightEnhancementSelfManaged();
+
+    int getColorBalanceMin();
+    int getColorBalanceMax();
+    int getColorBalance();
+    boolean setColorBalance(int value);
+
+    HSIC getPictureAdjustment();
+    HSIC getDefaultPictureAdjustment();
+    boolean setPictureAdjustment(in HSIC hsic);
+    float[] getPictureAdjustmentRanges();
 }
