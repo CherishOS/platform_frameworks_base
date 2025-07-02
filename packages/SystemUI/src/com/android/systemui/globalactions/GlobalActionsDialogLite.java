@@ -1162,7 +1162,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
     final class RestartAction extends SinglePressAction implements LongPressAction {
         RestartAction() {
             super(R.drawable.ic_restart, shouldShowRestartSubmenu()
-                    ? com.android.systemui.R.string.global_action_restart_more
+                    ? com.android.systemui.res.R.string.global_action_restart_more
                     : R.string.global_action_restart);
         }
 
@@ -1210,7 +1210,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
     private final class RestartSystemAction extends SinglePressAction implements LongPressAction {
         public RestartSystemAction() {
             super(R.drawable.ic_restart,
-                    com.android.systemui.R.string.global_action_restart_system);
+                    com.android.systemui.res.R.string.global_action_restart_system);
         }
 
         @Override
@@ -1240,8 +1240,8 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
 
     private final class RestartRecoveryAction extends SinglePressAction {
         private RestartRecoveryAction() {
-            super(com.android.systemui.R.drawable.ic_lock_restart_recovery,
-                    com.android.systemui.R.string.global_action_restart_recovery);
+            super(com.android.systemui.res.R.drawable.ic_lock_restart_recovery,
+                    com.android.systemui.res.R.string.global_action_restart_recovery);
         }
 
         @Override
@@ -1262,8 +1262,8 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
 
     private final class RestartBootloaderAction extends SinglePressAction {
         private RestartBootloaderAction() {
-            super(com.android.systemui.R.drawable.ic_lock_restart_bootloader,
-                    com.android.systemui.R.string.global_action_restart_bootloader);
+            super(com.android.systemui.res.R.drawable.ic_lock_restart_bootloader,
+                    com.android.systemui.res.R.string.global_action_restart_bootloader);
         }
 
         @Override
@@ -1284,8 +1284,8 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
 
     private final class RestartFastbootAction extends SinglePressAction {
         private RestartFastbootAction() {
-            super(com.android.systemui.R.drawable.ic_lock_restart_fastboot,
-                    com.android.systemui.R.string.global_action_restart_fastboot);
+            super(com.android.systemui.res.R.drawable.ic_lock_restart_fastboot,
+                    com.android.systemui.res.R.string.global_action_restart_fastboot);
         }
 
         @Override
@@ -1306,8 +1306,8 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
 
     private final class RestartDownloadAction extends SinglePressAction {
         private RestartDownloadAction() {
-            super(com.android.systemui.R.drawable.ic_lock_restart_bootloader,
-                    com.android.systemui.R.string.global_action_restart_download);
+            super(com.android.systemui.res.R.drawable.ic_lock_restart_bootloader,
+                    com.android.systemui.res.R.string.global_action_restart_download);
         }
 
         @Override
@@ -1539,7 +1539,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
 
     private final class RestartSystemUIAction extends SinglePressAction {
         private RestartSystemUIAction() {
-            super(com.android.systemui.R.drawable.ic_restart_systemui, com.android.systemui.R.string.global_action_restart_systemui);
+            super(com.android.systemui.res.R.drawable.ic_restart_systemui, com.android.systemui.res.R.string.global_action_restart_systemui);
         }
 
         @Override
@@ -1679,8 +1679,8 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
     @VisibleForTesting
     final class UsersAction extends SinglePressAction {
         private UsersAction() {
-            super(com.android.systemui.R.drawable.ic_lock_user,
-                    com.android.systemui.R.string.global_action_users);
+            super(com.android.systemui.res.R.drawable.ic_lock_user,
+                    com.android.systemui.res.R.string.global_action_users);
         }
 
         @Override
@@ -1723,7 +1723,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
         if (mUserManager.isUserSwitcherEnabled()) {
             List<UserInfo> users = mUserManager.getUsers();
             final int avatarSize = mContext.getResources().getDimensionPixelSize(
-                    com.android.systemui.R.dimen.global_actions_avatar_size);
+                    com.android.systemui.res.R.dimen.global_actions_avatar_size);
             for (final UserInfo user : users) {
                 if (user.supportsSwitchToByUser()) {
                     boolean isCurrentUser = currentUser == null
@@ -1738,7 +1738,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
                     avatar = new BitmapDrawable(mContext.getResources(),
                             createCircularClip(rawAvatar, avatarSize, avatarSize));
                     SinglePressAction switchToUser = new SinglePressAction(
-                            com.android.systemui.R.drawable.ic_lock_user, avatar,
+                            com.android.systemui.res.R.drawable.ic_lock_user, avatar,
                             (user.name != null ? user.name : "Primary")
                                     + (isCurrentUser ? " \u2714" : "")) {
                         public void onPress() {
@@ -1759,7 +1759,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
                     };
                     if (isCurrentUser) {
                         switchToUser.setStatus(mContext.getString(
-                                com.android.systemui.R.string.global_action_current_user));
+                                com.android.systemui.res.R.string.global_action_current_user));
                     }
                     addIfShouldShowAction(actions, switchToUser);
                 }
@@ -1969,7 +1969,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
                 Log.w(TAG, "No power options action found at position: " + position);
                 return null;
             }
-            int viewLayoutResource = com.android.systemui.R.layout.global_actions_grid_item_lite;
+            int viewLayoutResource = com.android.systemui.res.R.layout.global_actions_grid_item_lite;
             View view = convertView != null ? convertView
                     : LayoutInflater.from(mContext).inflate(viewLayoutResource, parent, false);
             view.setOnClickListener(v -> onClickItem(position));
@@ -2052,7 +2052,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
                 Log.w(TAG, "No users action found at position: " + position);
                 return null;
             }
-            int viewLayoutResource = com.android.systemui.R.layout.global_actions_power_item;
+            int viewLayoutResource = com.android.systemui.res.R.layout.global_actions_power_item;
             View view = convertView != null ? convertView
                     : LayoutInflater.from(mContext).inflate(viewLayoutResource, parent, false);
             view.setOnClickListener(v -> onClickItem(position));
@@ -2525,8 +2525,8 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
     private class AirplaneModeAction extends ToggleAction {
         AirplaneModeAction() {
             super(
-                    com.android.systemui.R.drawable.ic_lock_airplane_mode_enabled,
-                    com.android.systemui.R.drawable.ic_lock_airplane_mode_disabled,
+                    com.android.systemui.res.R.drawable.ic_lock_airplane_mode_enabled,
+                    com.android.systemui.res.R.drawable.ic_lock_airplane_mode_disabled,
                     R.string.global_actions_toggle_airplane_mode,
                     R.string.global_actions_airplane_mode_on_status,
                     R.string.global_actions_airplane_mode_off_status);
@@ -2678,8 +2678,8 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
 
     private final class DeviceControlsAction extends SinglePressAction {
         private DeviceControlsAction() {
-            super(com.android.systemui.R.drawable.controls_icon,
-                    com.android.systemui.R.string.quick_controls_title);
+            super(com.android.systemui.res.R.drawable.controls_icon,
+                    com.android.systemui.res.R.string.quick_controls_title);
         }
 
         @Override
