@@ -484,7 +484,7 @@ public class NavigationBarControllerImpl implements
 
     @Override
     public void onDisplayReady(int displayId) {
-        mCommandQueueCallbacks.onDisplayReady(displayId);
+        mCommandQueueCallbacks.onDisplayAddSystemDecorations(displayId);
     }
 
     @Override
