@@ -29,6 +29,7 @@ import com.android.systemui.qs.tiles.SyncTile
 import com.android.systemui.qs.tiles.WifiTile
 import com.android.systemui.qs.tiles.NfcTile
 import com.android.systemui.qs.tiles.ReadingModeTile
+import com.android.systemui.qs.tiles.CaffeineTile
 import com.android.systemui.qs.tiles.UsbTetherTile
 import com.android.systemui.qs.tiles.base.shared.model.QSTileConfig;
 import com.android.systemui.qs.tiles.base.shared.model.QSTilePolicy;
@@ -48,6 +49,12 @@ interface QSModuleCherish {
     @IntoMap
     @StringKey(AODTile.TILE_SPEC)
     fun bindAODTile(aodTile: AODTile): QSTileImpl<*>
+
+    /** Inject CaffeineTile into tileMap in QSModule */
+    @Binds
+    @IntoMap
+    @StringKey(CaffeineTile.TILE_SPEC)
+    fun bindCaffeineTile(caffeineTile: CaffeineTile): QSTileImpl<*>
 
     /** Inject CellularTile into tileMap in QSModule */
     @Binds
@@ -187,6 +194,21 @@ interface QSModuleCherish {
                 uiConfig = QSTileUIConfig.Resource(
                     iconRes = R.drawable.ic_qs_ambient_display,
                     labelRes = R.string.quick_settings_ambient_display_label
+                ),
+                instanceId = uiEventLogger.getNewInstanceId(),
+                category = TileCategory.DISPLAY
+            )
+        }
+
+        @Provides
+        @IntoMap
+        @StringKey(CaffeineTile.TILE_SPEC)
+        fun provideCaffeineConfig(uiEventLogger: QsEventLogger): QSTileConfig {
+            return QSTileConfig(
+                tileSpec = TileSpec.create(CaffeineTile.TILE_SPEC),
+                uiConfig = QSTileUIConfig.Resource(
+                    iconRes = R.drawable.ic_qs_caffeine,
+                    labelRes = R.string.quick_settings_caffeine_label
                 ),
                 instanceId = uiEventLogger.getNewInstanceId(),
                 category = TileCategory.DISPLAY
