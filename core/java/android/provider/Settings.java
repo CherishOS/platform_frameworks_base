@@ -6637,6 +6637,11 @@ public final class Settings {
          */
         public static final String NAVIGATION_BAR_HINT = "navigation_bar_hint";
 
+        /** 
+         * @hide
+         */
+        public static final String ONGOING_ACTION_CHIP = "ongoing_action_chip";
+
         /**
          * IMPORTANT: If you add a new public settings you also have to add it to
          * PUBLIC_SETTINGS below. If the new setting is hidden you have to add
