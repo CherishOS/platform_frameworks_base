@@ -21,6 +21,7 @@ import com.android.systemui.qs.QsEventLogger
 import com.android.systemui.qs.pipeline.shared.TileSpec
 import com.android.systemui.qs.shared.model.TileCategory
 import com.android.systemui.qs.tileimpl.QSTileImpl
+import com.android.systemui.qs.tiles.AODTile
 import com.android.systemui.qs.tiles.CellularTile
 import com.android.systemui.qs.tiles.WifiTile
 import com.android.systemui.qs.tiles.NfcTile
@@ -38,12 +39,17 @@ import dagger.multibindings.StringKey
 @Module
 interface QSModuleCherish {
 
+     /** Inject AODTile into tileMap in QSModule */
+    @Binds
+    @IntoMap
+    @StringKey(AODTile.TILE_SPEC)
+    fun bindAODTile(aodTile: AODTile): QSTileImpl<*>
+
     /** Inject CellularTile into tileMap in QSModule */
     @Binds
     @IntoMap
     @StringKey(CellularTile.TILE_SPEC)
     fun bindCellularTile(cellularTile: CellularTile): QSTileImpl<*>
-
 
     /** Inject WifiTile into tileMap in QSModule */
     @Binds
@@ -52,6 +58,22 @@ interface QSModuleCherish {
     fun bindWifiTile(wifiTile: WifiTile): QSTileImpl<*>
 
     companion object {
+
+        @Provides
+        @IntoMap
+        @StringKey(AODTile.TILE_SPEC)
+        fun provideAODConfig(uiEventLogger: QsEventLogger): QSTileConfig {
+            return QSTileConfig(
+                tileSpec = TileSpec.create(AODTile.TILE_SPEC),
+                uiConfig = QSTileUIConfig.Resource(
+                    iconRes = R.drawable.ic_qs_aod,
+                    labelRes = R.string.quick_settings_aod_label
+                ),
+                instanceId = uiEventLogger.getNewInstanceId(),
+                category = TileCategory.DISPLAY
+            )
+        }
+
         @Provides
         @IntoMap
         @StringKey(CellularTile.TILE_SPEC)
