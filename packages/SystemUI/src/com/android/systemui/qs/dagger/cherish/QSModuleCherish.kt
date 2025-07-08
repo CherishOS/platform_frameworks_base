@@ -23,6 +23,7 @@ import com.android.systemui.qs.shared.model.TileCategory
 import com.android.systemui.qs.tileimpl.QSTileImpl
 import com.android.systemui.qs.tiles.AODTile
 import com.android.systemui.qs.tiles.CellularTile
+import com.android.systemui.qs.tiles.HeadsUpTile
 import com.android.systemui.qs.tiles.WifiTile
 import com.android.systemui.qs.tiles.NfcTile
 import com.android.systemui.qs.tiles.ReadingModeTile
@@ -56,6 +57,12 @@ interface QSModuleCherish {
     @IntoMap
     @StringKey(WifiTile.TILE_SPEC)
     fun bindWifiTile(wifiTile: WifiTile): QSTileImpl<*>
+
+    /** Inject HeadsUpTile into tileMap in QSModule */
+    @Binds
+    @IntoMap
+    @StringKey(HeadsUpTile.TILE_SPEC)
+    fun bindHeadsUpTile(headsUpTile: HeadsUpTile): QSTileImpl<*>
 
     companion object {
 
@@ -118,6 +125,20 @@ interface QSModuleCherish {
                 ),
                 instanceId = uiEventLogger.getNewInstanceId(),
                 category = TileCategory.CONNECTIVITY
+            )
+        }
+        @Provides
+        @IntoMap
+        @StringKey(HeadsUpTile.TILE_SPEC)
+        fun provideHeadsUpConfig(uiEventLogger: QsEventLogger): QSTileConfig {
+            return QSTileConfig(
+                tileSpec = TileSpec.create(HeadsUpTile.TILE_SPEC),
+                uiConfig = QSTileUIConfig.Resource(
+                    iconRes = R.drawable.ic_qs_heads_up,
+                    labelRes = R.string.quick_settings_heads_up_label
+                ),
+                instanceId = uiEventLogger.getNewInstanceId(),
+                category = TileCategory.DISPLAY
             )
         }
     }
