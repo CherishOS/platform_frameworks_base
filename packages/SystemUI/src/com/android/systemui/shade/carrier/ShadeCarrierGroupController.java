@@ -362,7 +362,14 @@ public class ShadeCarrierGroupController {
     }
 
     private boolean computeIsSingleCarrier() {
-        return true;
+        int carrierCount = 0;
+        for (int i = 0; i < SIM_SLOTS; i++) {
+
+            if (mInfos[i].visible) {
+                carrierCount++;
+            }
+        }
+        return carrierCount == 1;
     }
 
     public void setListening(boolean listening) {

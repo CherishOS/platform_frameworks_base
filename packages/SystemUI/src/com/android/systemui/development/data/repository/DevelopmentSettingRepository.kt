@@ -29,7 +29,6 @@ import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
@@ -50,7 +49,10 @@ constructor(
      * * User is not restricted from Debugging features.
      */
     fun isDevelopmentSettingEnabled(userInfo: UserInfo): Flow<Boolean> {
-        return flowOf(false)
+        return settingFlow
+            .emitOnStart()
+            .map { checkDevelopmentSettingEnabled(userInfo) }
+            .flowOn(backgroundDispatcher)
     }
 
     private suspend fun checkDevelopmentSettingEnabled(userInfo: UserInfo): Boolean {
