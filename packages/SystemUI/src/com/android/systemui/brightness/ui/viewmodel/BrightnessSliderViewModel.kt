@@ -71,11 +71,6 @@ constructor(
             screenBrightnessInteractor.gammaBrightness,
         )
 
-    val autoMode by hydrator.hydratedStateOf(
-        traceName = "autoMode",
-        source = screenBrightnessInteractor.isAutoBrightnessEnabledFlow
-    )
-
     val maxBrightness = screenBrightnessInteractor.maxGammaBrightness
     val minBrightness = screenBrightnessInteractor.minGammaBrightness
 
@@ -118,10 +113,6 @@ constructor(
         }
     }
 
-    fun onIconClick() {
-        screenBrightnessInteractor.toggleBrightnessMode()
-    }
-
     fun setIsDragging(dragging: Boolean) {
         brightnessMirrorShowingInteractor.setMirrorShowing(dragging && supportsMirroring)
     }
@@ -146,13 +137,11 @@ constructor(
                 brightnessLow = R.drawable.ic_brightness_low,
                 brightnessMid = R.drawable.ic_brightness_medium,
                 brightnessHigh = R.drawable.ic_brightness_full,
-                brightnessAuto = R.drawable.ic_brightness_auto,
             )
 
         @DrawableRes
-        fun getIconForPercentage(@FloatRange(0.0, 100.0) percentage: Float, autoMode: Boolean): Int {
+        fun getIconForPercentage(@FloatRange(0.0, 100.0) percentage: Float): Int {
             return when {
-                autoMode -> icons.brightnessAuto
                 percentage <= 20f -> icons.brightnessLow
                 percentage >= 80f -> icons.brightnessHigh
                 else -> icons.brightnessMid
@@ -176,5 +165,4 @@ private data class BrightnessIcons(
     @DrawableRes val brightnessLow: Int,
     @DrawableRes val brightnessMid: Int,
     @DrawableRes val brightnessHigh: Int,
-    @DrawableRes val brightnessAuto: Int,
 )

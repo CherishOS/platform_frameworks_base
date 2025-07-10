@@ -233,9 +233,6 @@ public class QuickSettingsControllerImpl implements QuickSettingsController, Dum
     private boolean mExpansionEnabledPolicy = true;
     private boolean mExpansionEnabledAmbient = true;
     private float mQuickQsHeaderHeight;
-    private int mPanelTopMargin;
-    private int mExpandedMediaHeight;
-    private int mQQsMinHeight;
     /**
      * Determines if QS should be already expanded when expanding shade.
      * Used for split shade, two finger gesture as well as accessibility shortcut to QS.
@@ -458,20 +455,12 @@ public class QuickSettingsControllerImpl implements QuickSettingsController, Dum
                 LargeScreenUtils.shouldUseLargeScreenShadeHeader(mPanelView.getResources());
         mLargeScreenShadeHeaderHeight =
                 mLargeScreenHeaderHelperLazy.get().getLargeScreenHeaderHeight();
-        mPanelTopMargin = mUseLargeScreenShadeHeader ? mLargeScreenShadeHeaderHeight :
+        int topMargin = mUseLargeScreenShadeHeader ? mLargeScreenShadeHeaderHeight :
                 mResources.getDimensionPixelSize(R.dimen.notification_panel_margin_top);
         mShadeHeaderController.setLargeScreenActive(mUseLargeScreenShadeHeader);
-        mAmbientState.setStackTopMargin(mPanelTopMargin);
+        mAmbientState.setStackTopMargin(topMargin);
 
         mQuickQsHeaderHeight = mLargeScreenShadeHeaderHeight;
-        
-        mExpandedMediaHeight =
-                mResources.getDimensionPixelSize(
-                        R.dimen.qs_media_session_height_expanded);
-                        
-        mQQsMinHeight =
-                mResources.getDimensionPixelSize(
-                        R.dimen.qqs_min_height);
 
         mEnableClipping = mResources.getBoolean(R.bool.qs_enable_clipping);
         updateGestureInsetsCache();
@@ -2232,16 +2221,6 @@ public class QuickSettingsControllerImpl implements QuickSettingsController, Dum
                     if (QSComposeFragment.isEnabled() && mPreviouslyVisibleMedia && !visible) {
                         updateHeightsOnShadeLayoutChange();
                         mPanelViewControllerLazy.get().positionClockAndNotifications();
-                        // the current calculation is not reliable at all, there were times 
-                        // that it is still including the media height which causes the stack scroller to not react
-                        // to the top padding changes
-                        int calculatedTopPadding = mPanelTopMargin + getHeaderHeight() - mExpandedMediaHeight;
-                        int topPadding = Math.max(calculatedTopPadding, mQQsMinHeight);
-                        // update notif shade intractor
-                        mPanelViewControllerLazy.get().requestScrollerTopPaddingUpdate();
-                        // do not wait for pending top padding changes. force update the notif stack srolllayout
-                        mNotificationStackScrollLayoutController.updateTopPadding((float) topPadding);
-                        updateExpansion();
                     }
                 }
                 mPreviouslyVisibleMedia = visible;
