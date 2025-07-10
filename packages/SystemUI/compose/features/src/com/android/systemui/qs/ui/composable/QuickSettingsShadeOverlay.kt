@@ -295,8 +295,6 @@ object QuickSettingsShade {
 
     object Dimensions {
         val Padding = 16.dp
-        val QsPadding = 10.dp
-        val InnerPadding = 28.dp
         val ToolbarHeight = 48.dp
     }
 

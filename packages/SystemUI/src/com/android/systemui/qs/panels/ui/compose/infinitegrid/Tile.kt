@@ -78,7 +78,6 @@ import com.android.compose.animation.Expandable
 import com.android.compose.animation.bounceable
 import com.android.compose.animation.rememberExpandableController
 import com.android.compose.modifiers.thenIf
-import com.android.compose.modifiers.width
 import com.android.compose.theme.LocalAndroidColorScheme
 import com.android.systemui.Flags
 import com.android.systemui.animation.Expandable
@@ -89,11 +88,9 @@ import com.android.systemui.haptics.msdl.qs.TileHapticsViewModelFactoryProvider
 import com.android.systemui.lifecycle.rememberViewModel
 import com.android.systemui.qs.flags.QsDetailedView
 import com.android.systemui.qs.panels.ui.compose.BounceableInfo
-import com.android.systemui.qs.panels.ui.compose.infinitegrid.CommonTileDefaults.ActiveCornerRadius
 import com.android.systemui.qs.panels.ui.compose.infinitegrid.CommonTileDefaults.InactiveCornerRadius
 import com.android.systemui.qs.panels.ui.compose.infinitegrid.CommonTileDefaults.TileEndPadding
-import com.android.systemui.qs.panels.ui.compose.infinitegrid.CommonTileDefaults.tileHeight
-import com.android.systemui.qs.panels.ui.compose.infinitegrid.CommonTileDefaults.TilePaddingLarge
+import com.android.systemui.qs.panels.ui.compose.infinitegrid.CommonTileDefaults.TileHeight
 import com.android.systemui.qs.panels.ui.compose.infinitegrid.CommonTileDefaults.TileStartPadding
 import com.android.systemui.qs.panels.ui.compose.infinitegrid.CommonTileDefaults.longPressLabel
 import com.android.systemui.qs.panels.ui.viewmodel.AccessibilityUiState
@@ -105,7 +102,6 @@ import com.android.systemui.qs.panels.ui.viewmodel.toIconProvider
 import com.android.systemui.qs.panels.ui.viewmodel.toUiState
 import com.android.systemui.qs.tileimpl.QSTileImpl
 import com.android.systemui.qs.ui.compose.borderOnFocus
-import com.android.systemui.util.CustomAndroidColorScheme
 import com.android.systemui.res.R
 import kotlinx.coroutines.CoroutineScope
 
@@ -175,22 +171,16 @@ fun Tile(
         val tileShape by TileDefaults.animateTileShapeAsState(uiState.state)
         val animatedColor by animateColorAsState(colors.background, label = "QSTileBackgroundColor")
         val animatedAlpha by animateFloatAsState(colors.alpha, label = "QSTileAlpha")
-        val tileHeight = tileHeight()
 
         TileExpandable(
             color = { animatedColor },
             shape = tileShape,
-            squishiness = if (iconOnly) { { 1f } } else squishiness,
+            squishiness = squishiness,
             hapticsViewModel = hapticsViewModel,
             modifier =
                 modifier
                     .borderOnFocus(color = MaterialTheme.colorScheme.secondary, tileShape.topEnd)
-                    .then(
-                        if (iconOnly)
-                            Modifier.width { tileHeight.roundToPx() }
-                        else
-                            Modifier.fillMaxWidth(0.9f)
-                    )
+                    .fillMaxWidth()
                     .bounceable(
                         bounceable = currentBounceableInfo.bounceable,
                         previousBounceable = currentBounceableInfo.previousTile,
@@ -296,7 +286,7 @@ fun TileContainer(
 ) {
     Box(
         modifier =
-            Modifier.height(tileHeight())
+            Modifier.height(TileHeight)
                 .fillMaxWidth()
                 .tileCombinedClickable(
                     onClick = onClick,
@@ -322,7 +312,7 @@ fun LargeStaticTile(
         modifier
             .clip(TileDefaults.animateTileShapeAsState(state = uiState.state).value)
             .background(colors.background)
-            .height(tileHeight())
+            .height(TileHeight)
             .largeTilePadding()
     ) {
         LargeTileContent(
@@ -391,8 +381,8 @@ data class TileColors(
 )
 
 private object TileDefaults {
-    val ActiveIconCornerRadius = ActiveCornerRadius
-    val ActiveTileCornerRadius = ActiveCornerRadius
+    val ActiveIconCornerRadius = 16.dp
+    val ActiveTileCornerRadius = 24.dp
 
     /** An active icon tile uses the active color as background */
     @Composable
@@ -400,7 +390,7 @@ private object TileDefaults {
     fun activeIconTileColors(): TileColors =
         TileColors(
             background = MaterialTheme.colorScheme.primary,
-            iconBackground = Color.Transparent,
+            iconBackground = MaterialTheme.colorScheme.primary,
             label = MaterialTheme.colorScheme.onPrimary,
             secondaryLabel = MaterialTheme.colorScheme.onPrimary,
             icon = MaterialTheme.colorScheme.onPrimary,
@@ -411,10 +401,10 @@ private object TileDefaults {
     @ReadOnlyComposable
     fun activeDualTargetTileColors(): TileColors =
         TileColors(
-            background = MaterialTheme.colorScheme.primary,
-            iconBackground = Color.Transparent,
-            label = MaterialTheme.colorScheme.onPrimary,
-            secondaryLabel = MaterialTheme.colorScheme.onPrimary,
+            background = LocalAndroidColorScheme.current.surfaceEffect2,
+            iconBackground = MaterialTheme.colorScheme.primary,
+            label = MaterialTheme.colorScheme.onSurface,
+            secondaryLabel = MaterialTheme.colorScheme.onSurface,
             icon = MaterialTheme.colorScheme.onPrimary,
         )
 
@@ -422,8 +412,8 @@ private object TileDefaults {
     @ReadOnlyComposable
     fun inactiveDualTargetTileColors(): TileColors =
         TileColors(
-            background = CustomAndroidColorScheme.current.shadeTileColor,
-            iconBackground = Color.Transparent,
+            background = LocalAndroidColorScheme.current.surfaceEffect2,
+            iconBackground = LocalAndroidColorScheme.current.surfaceEffect3,
             label = MaterialTheme.colorScheme.onSurface,
             secondaryLabel = MaterialTheme.colorScheme.onSurface,
             icon = MaterialTheme.colorScheme.onSurface,
@@ -433,7 +423,7 @@ private object TileDefaults {
     @ReadOnlyComposable
     fun inactiveTileColors(): TileColors =
         TileColors(
-            background = CustomAndroidColorScheme.current.shadeTileColor,
+            background = LocalAndroidColorScheme.current.surfaceEffect2,
             iconBackground = Color.Transparent,
             label = MaterialTheme.colorScheme.onSurface,
             secondaryLabel = MaterialTheme.colorScheme.onSurface,
@@ -444,8 +434,8 @@ private object TileDefaults {
     @ReadOnlyComposable
     fun unavailableTileColors(): TileColors {
         return TileColors(
-            background = CustomAndroidColorScheme.current.shadeTileColor,
-            iconBackground = Color.Transparent,
+            background = LocalAndroidColorScheme.current.surfaceEffect2,
+            iconBackground = LocalAndroidColorScheme.current.surfaceEffect2,
             label = MaterialTheme.colorScheme.onSurface,
             secondaryLabel = MaterialTheme.colorScheme.onSurface,
             icon = MaterialTheme.colorScheme.onSurface,
