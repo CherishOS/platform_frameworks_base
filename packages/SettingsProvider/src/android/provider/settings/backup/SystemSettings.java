@@ -125,7 +125,9 @@ public class SystemSettings {
                 Settings.System.NOTIFICATION_COOLDOWN_ALL,
                 Settings.System.NOTIFICATION_COOLDOWN_VIBRATE_UNLOCKED,
                 Settings.System.PREFERRED_REGION,
-                Settings.System.CV_ENABLED
+                Settings.System.CV_ENABLED,
+                Settings.System.QS_SHOW_BRIGHTNESS,
+        	Settings.System.QS_BRIGHTNESS_POSITION_BOTTOM
         ));
         if (Flags.backUpSmoothDisplayAndForcePeakRefreshRate()) {
             settings.add(Settings.System.PEAK_REFRESH_RATE);
