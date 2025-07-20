@@ -47,6 +47,7 @@ import com.android.systemui.compose.modifiers.sysuiResTag
 import com.android.systemui.development.ui.compose.BuildNumber
 import com.android.systemui.development.ui.viewmodel.BuildNumberViewModel
 import com.android.systemui.lifecycle.rememberViewModel
+import com.android.systemui.qs.footer.ui.viewmodel.FooterActionsDataUsageViewModel
 import com.android.systemui.qs.panels.dagger.PaginatedBaseLayoutType
 import com.android.systemui.qs.panels.ui.compose.Dimensions.FooterHeight
 import com.android.systemui.qs.panels.ui.compose.Dimensions.InterPageSpacing
@@ -63,6 +64,7 @@ class PaginatedGridLayout
 constructor(
     private val viewModelFactory: PaginatedGridViewModel.Factory,
     @PaginatedBaseLayoutType private val delegateGridLayout: PaginatableGridLayout,
+    private val dataUsageViewModel: FooterActionsDataUsageViewModel,
 ) : GridLayout by delegateGridLayout {
     @Composable
     override fun ContentScope.TileGrid(
@@ -140,6 +142,7 @@ constructor(
                 buildNumberViewModelFactory = viewModel.buildNumberViewModelFactory,
                 pagerState = pagerState,
                 editButtonViewModelFactory = viewModel.editModeButtonViewModelFactory,
+                dataUsageViewModel = dataUsageViewModel,
             )
         }
     }
@@ -155,6 +158,7 @@ private fun FooterBar(
     buildNumberViewModelFactory: BuildNumberViewModel.Factory,
     pagerState: PagerState,
     editButtonViewModelFactory: EditModeButtonViewModel.Factory,
+    dataUsageViewModel: FooterActionsDataUsageViewModel? = null,
 ) {
     val editButtonViewModel =
         rememberViewModel(traceName = "PaginatedGridLayout-editButtonViewModel") {
@@ -178,6 +182,7 @@ private fun FooterBar(
             BuildNumber(
                 viewModelFactory = buildNumberViewModelFactory,
                 textColor = MaterialTheme.colorScheme.onSurface,
+                dataUsageViewModel = dataUsageViewModel,
                 modifier =
                     Modifier.borderOnFocus(
                             color = MaterialTheme.colorScheme.secondary,
