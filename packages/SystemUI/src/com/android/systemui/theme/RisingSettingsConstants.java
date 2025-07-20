@@ -20,6 +20,12 @@ import android.provider.Settings;
 public class RisingSettingsConstants {
 
     public static final String[] SYSTEM_SETTINGS_KEYS = {
+        "statusbar_colored_icons",
+        "statusbar_notif_count",
+        "ls_media_art_enabled",
+        "ls_media_art_filter",
+        "ongoing_action_chip",
+        "compact_progress_mode"
     };
     
     public static final String[] SECURE_SETTINGS_KEYS = {
