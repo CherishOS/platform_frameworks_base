@@ -523,12 +523,12 @@
         <item name="onSurfaceVariant">@androidprv:color/materialColorOnSurfaceVariant</item>
         <item name="outline">@androidprv:color/materialColorOutline</item>
 
-        <item name="shadeActive">@androidprv:color/customColorShadeActive</item>
-        <item name="onShadeActive">@androidprv:color/customColorOnShadeActive</item>
-        <item name="onShadeActiveVariant">@androidprv:color/customColorOnShadeActiveVariant</item>
-        <item name="shadeInactive">@androidprv:color/customColorShadeInactive</item>
-        <item name="onShadeInactive">@androidprv:color/customColorOnShadeInactive</item>
-        <item name="onShadeInactiveVariant">@androidprv:color/customColorOnShadeInactiveVariant</item>
+        <item name="shadeActive">@androidprv:color/materialColorPrimary</item>
+        <item name="onShadeActive">@androidprv:color/materialColorOnPrimary</item>
+        <item name="onShadeActiveVariant">@androidprv:color/materialColorPrimaryFixedDim</item>
+        <item name="shadeInactive">@androidprv:color/surface_effect_2</item>
+        <item name="onShadeInactive">@androidprv:color/materialColorOnSurface</item>
+        <item name="onShadeInactiveVariant">@androidprv:color/materialColorOnSurfaceVariant</item>
         <item name="shadeDisabled">@androidprv:color/customColorShadeDisabled</item>
         <item name="underSurface">@androidprv:color/customColorUnderSurface</item>
         <item name="android:itemTextAppearance">@style/Control.MenuItem</item>
