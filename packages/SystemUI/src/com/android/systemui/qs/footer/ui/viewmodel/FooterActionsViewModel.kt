@@ -24,7 +24,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.LifecycleOwner
 import com.android.app.tracing.coroutines.launchTraced as launch
-import com.android.settingslib.Utils
 import com.android.systemui.animation.Expandable
 import com.android.systemui.common.shared.model.ContentDescription
 import com.android.systemui.common.shared.model.Icon
@@ -406,7 +405,7 @@ fun settingsButtonViewModel(
             R.drawable.ic_settings,
             ContentDescription.Resource(R.string.accessibility_quick_settings_settings),
         ),
-        iconTint = Utils.getColorAttrDefaultColor(qsThemedContext, R.attr.onShadeInactiveVariant),
+        iconTint = R.attr.onShadeInactive,
         backgroundColor = R.attr.shadeInactive,
         onSettingsButtonClicked,
     )
@@ -434,11 +433,7 @@ fun powerButtonViewModel(
             android.R.drawable.ic_lock_power_off,
             ContentDescription.Resource(R.string.accessibility_quick_settings_power_menu),
         ),
-        iconTint =
-            Utils.getColorAttrDefaultColor(
-                qsThemedContext,
-                if (isDualShade) R.attr.onShadeInactiveVariant else R.attr.onShadeActive,
-            ),
+        iconTint = if (isDualShade) R.attr.onShadeInactive else R.attr.onShadeActive,
         backgroundColor = if (isDualShade) R.attr.shadeInactive else R.attr.shadeActive,
         onPowerButtonClicked,
     )

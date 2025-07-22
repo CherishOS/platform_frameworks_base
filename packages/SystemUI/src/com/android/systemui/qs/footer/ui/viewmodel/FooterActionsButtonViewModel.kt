@@ -17,7 +17,6 @@
 package com.android.systemui.qs.footer.ui.viewmodel
 
 import android.annotation.AttrRes
-import android.annotation.ColorInt
 import androidx.compose.runtime.Stable
 import com.android.systemui.animation.Expandable
 import com.android.systemui.common.shared.model.Icon
@@ -30,7 +29,7 @@ import com.android.systemui.common.shared.model.Icon
 data class FooterActionsButtonViewModel(
     val id: Int,
     val icon: Icon,
-    @ColorInt val iconTint: Int?,
+    @AttrRes val iconTint: Int?,
     @AttrRes val backgroundColor: Int,
     val onClick: (Expandable) -> Unit,
 )
