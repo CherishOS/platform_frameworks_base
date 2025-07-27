@@ -23,6 +23,8 @@ import android.content.res.Resources
 import android.os.Trace
 import android.os.UserHandle
 import android.provider.Settings
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.service.quicksettings.Tile.STATE_ACTIVE
 import android.service.quicksettings.Tile.STATE_INACTIVE
 import androidx.compose.animation.animateColorAsState
@@ -82,6 +84,7 @@ import com.android.compose.animation.bounceable
 import com.android.compose.animation.rememberExpandableController
 import com.android.compose.modifiers.thenIf
 import com.android.compose.theme.LocalAndroidColorScheme
+import com.android.systemui.Dependency
 import com.android.systemui.Flags
 import com.android.systemui.animation.Expandable
 import com.android.systemui.common.shared.model.Icon
@@ -177,6 +180,10 @@ fun Tile(
         val animatedColor by animateColorAsState(colors.background, label = "QSTileBackgroundColor")
         val animatedAlpha by animateFloatAsState(colors.alpha, label = "QSTileAlpha")
 
+        val context = LocalContext.current
+        val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        val EFFECT_CLICK = VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
+
         TileExpandable(
             color = { animatedColor },
             shape = tileShape,
@@ -208,6 +215,9 @@ fun Tile(
                     var hasDetails = false
                     if (QsDetailedView.isEnabled) {
                         hasDetails = detailsViewModel?.onTileClicked(tile.spec) == true
+                    }
+                    if (!Flags.msdlFeedback()) {
+                        vibrator.vibrate(EFFECT_CLICK)
                     }
                     if (!hasDetails) {
                         // For those tile's who doesn't have a detailed view, process with their
