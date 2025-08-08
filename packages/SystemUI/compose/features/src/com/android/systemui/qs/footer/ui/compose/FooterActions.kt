@@ -168,7 +168,8 @@ fun FooterActions(
         }
     }
 
-    val backgroundColor = Color.Transparent
+    val backgroundColor =
+        if (!notificationShadeBlur()) colorAttr(R.attr.underSurface) else Color.Transparent
     val backgroundAlphaValue = if (!notificationShadeBlur()) backgroundAlpha::value else ({ 0f })
     val contentColor = MaterialTheme.colorScheme.onSurface
     val backgroundTopRadius = dimensionResource(R.dimen.qs_corner_radius)
@@ -177,7 +178,7 @@ fun FooterActions(
             Modifier.animatedBackground(
                 { backgroundColor },
                 backgroundAlphaValue,
-                RoundedCornerShape(backgroundTopRadius),
+                RoundedCornerShape(topStart = backgroundTopRadius, topEnd = backgroundTopRadius),
             )
         }
 
@@ -402,7 +403,7 @@ private fun TextButton(
 ) {
     Expandable(
         shape = CircleShape,
-        color = Color.Transparent,
+        color = colorAttr(R.attr.underSurface),
         contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
         borderStroke = BorderStroke(1.dp, colorAttr(R.attr.shadeInactive)),
         modifier =

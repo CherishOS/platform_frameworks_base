@@ -7539,11 +7539,6 @@ public final class Settings {
         public static final String QS_HEADER_CLOCK_SIZE = "qs_header_clock_size";
 
         /**
-         * @hide
-         */
-        public static final String QS_TRANSPARENCY = "qs_transparency";
-
-        /**
          * Whether to show the carrier name on the lockscreen
          * @hide
          */
