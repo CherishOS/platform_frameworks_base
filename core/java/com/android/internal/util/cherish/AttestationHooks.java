@@ -93,7 +93,7 @@ public final class AttestationHooks {
         }
 
         if (packageName.equals(PACKAGE_VENDING)) {
-            if (SystemProperties.getBoolean(SPOOF_PIXEL_VENDING, false)) {
+            if (SystemProperties.getBoolean(SPOOF_PIXEL_VENDING, true)) {
                 sMainlineProps.forEach(AttestationHooks::setPropValue);
             }
         }
