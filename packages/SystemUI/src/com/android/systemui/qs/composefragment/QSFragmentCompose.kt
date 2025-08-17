@@ -224,8 +224,6 @@ constructor(
     override fun onStart() {
         super.onStart()
         registerDumpable()
-        registerObserver(Settings.System.QS_SHOW_BRIGHTNESS)
-        registerObserver(Settings.System.QS_BRIGHTNESS_POSITION_BOTTOM)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -258,6 +256,9 @@ constructor(
                 handleSettingsChange(key)
             }
         }
+
+        registerObserver(Settings.System.QS_SHOW_BRIGHTNESS)
+        registerObserver(Settings.System.QS_BRIGHTNESS_POSITION_BOTTOM)
     }
 
     override fun onCreateView(
