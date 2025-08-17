@@ -75,6 +75,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.android.compose.animation.Expandable
 import com.android.compose.animation.scene.ContentScope
 import com.android.compose.modifiers.animatedBackground
+import com.android.compose.theme.LocalAndroidColorScheme
 import com.android.compose.theme.colorAttr
 import com.android.systemui.Flags.notificationShadeBlur
 import com.android.systemui.animation.Expandable
@@ -406,13 +407,12 @@ private fun TextButton(
 ) {
     Expandable(
         shape = CircleShape,
-        color = Color.Transparent,
+        color = LocalAndroidColorScheme.current.surfaceEffect2,
         contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        borderStroke = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurfaceVariant),
         modifier =
             modifier
                 .padding(horizontal = 4.dp)
-                .borderOnFocus(color = MaterialTheme.colorScheme.secondary, CornerSize(50)),
+                .clip(RoundedCornerShape(50)),
         onClick = onClick,
         useModifierBasedImplementation = useModifierBasedExpandable,
     ) {
@@ -423,7 +423,7 @@ private fun TextButton(
             Icon(
                 icon,
                 Modifier.padding(end = 12.dp).size(20.dp),
-                MaterialTheme.colorScheme.onSurfaceVariant,
+                MaterialTheme.colorScheme.onSurface,
             )
 
             CompatText(
@@ -436,7 +436,7 @@ private fun TextButton(
                         MaterialTheme.typography.bodyMedium
                     },
                 letterSpacing = if (QsInCompose.isEnabled) 0.em else 0.01.em,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -450,7 +450,7 @@ private fun TextButton(
                     painterResource(com.android.internal.R.drawable.ic_chevron_end),
                     contentDescription = null,
                     Modifier.padding(start = 8.dp).size(20.dp),
-                    MaterialTheme.colorScheme.onSurfaceVariant,
+                    MaterialTheme.colorScheme.onSurface,
                 )
             }
         }
