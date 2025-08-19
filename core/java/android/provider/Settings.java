@@ -7345,12 +7345,6 @@ public final class Settings {
         public static final String STATUS_BAR_CLOCK_AUTO_HIDE_SDURATION = "status_bar_clock_auto_hide_sduration";
 
         /**
-         * Whether to disable qs on secure lockscreen.
-         * @hide
-         */
-        public static final String SECURE_LOCKSCREEN_QS_DISABLED = "secure_lockscreen_qs_disabled";
-
-        /**
          * Battery style
          * @hide
          */
