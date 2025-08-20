@@ -21,6 +21,12 @@
     <string name="launcher_restart_title">Launcher restart required</string>
     <string name="launcher_restart_message">For all changes to take effect, a Launcher restart is required. Restart Launcher now?</string>
 
+    <!-- Charging speed strings -->
+    <string name="charging_speed">Charging speed</string>
+    <string name="charging_speed_slow">Slow</string>
+    <string name="charging_speed_fast">Fast</string>
+    <string name="charging_speed_super_fast">Super fast</string>
+
     <!-- LiveDisplay strings -->
     <string name="live_display_title" translatable="false">LiveDisplay</string>
     <string name="live_display_auto">Automatic</string>

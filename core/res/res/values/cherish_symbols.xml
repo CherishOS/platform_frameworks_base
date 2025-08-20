@@ -315,4 +315,9 @@
 
     <!-- Default line spacing multiplier between hours and minutes of the keyguard clock-->
     <java-symbol type="dimen" format="float" name="keyguard_clock_line_spacing_scale" />
+
+    <!-- Charging speed -->
+    <java-symbol type="string" name="charging_speed" />
+    <java-symbol type="array" name="charging_speed_entries" />
+    <java-symbol type="array" name="charging_speed_values" />
 </resources>
