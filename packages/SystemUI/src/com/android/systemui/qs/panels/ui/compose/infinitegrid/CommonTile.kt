@@ -123,17 +123,21 @@ fun LargeTileContent(
         val focusBorderColor = MaterialTheme.colorScheme.secondary
         Box(
             modifier =
-                Modifier.size(CommonTileDefaults.ToggleTargetSize)
+                Modifier
+                    .size(
+                        if (toggleClick != null) CommonTileDefaults.ToggleTargetSize 
+                        else CommonTileDefaults.IconSize
+                    )
                     .clip(iconShape)
                     .verticalSquish(squishiness)
-                    .drawBehind { drawRect(animatedBackgroundColor) }
                     .thenIf(toggleClick != null) {
-                        Modifier.borderOnFocus(color = focusBorderColor, iconShape.topEnd)
+                        Modifier
+                            .drawBehind { drawRect(animatedBackgroundColor) }
+                            .borderOnFocus(color = focusBorderColor, iconShape.topEnd)
                             .combinedClickable(
                                 onClick = toggleClick!!,
                                 onLongClick = onLongClick,
                                 onLongClickLabel = longPressLabel,
-                                hapticFeedbackEnabled = !Flags.msdlFeedback(),
                             )
                             .thenIf(accessibilityUiState != null) {
                                 Modifier.semantics {
