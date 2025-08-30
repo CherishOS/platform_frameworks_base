@@ -771,6 +771,10 @@ public final class PixelPropsUtils {
         boolean isPixelGmsEnabled = SystemProperties.getBoolean(SPOOF_PIXEL_GMS, false);
         if (!isPixelGmsEnabled)
             return;
+        if (isKeyboxXmlPresent()) {
+            if (DEBUG) Log.d(TAG, "KEYBOX_DATA present; not blocking attestation");
+            return;
+        }
         // Check stack for SafetyNet or Play Integrity
         if (isCallerSafetyNet() && !sIsExcluded) {
             dlog("Blocked key attestation");
@@ -780,5 +784,18 @@ public final class PixelPropsUtils {
 
     public static void dlog(String msg) {
         if (DEBUG) Log.d(TAG, "[" + sProcessName + "] " + msg);
+    }
+
+    private static boolean isKeyboxXmlPresent() {
+        try {
+            Context ctx = ActivityThread.currentApplication() != null
+                    ? ActivityThread.currentApplication().getApplicationContext()
+                    : null;
+            if (ctx == null) return false;
+            String xml = Settings.Secure.getString(ctx.getContentResolver(), Settings.Secure.KEYBOX_DATA);
+            return xml != null && !xml.trim().isEmpty();
+        } catch (Throwable t) {
+            return false;
+        }
     }
 }
