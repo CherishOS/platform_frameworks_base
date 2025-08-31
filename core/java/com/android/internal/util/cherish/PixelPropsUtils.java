@@ -369,7 +369,7 @@ public final class PixelPropsUtils {
     }
 
     public static void spoofBuildGms() {
-        if (!SystemProperties.getBoolean(SPOOF_PIXEL_GMS, false))
+        if (!SystemProperties.getBoolean(SPOOF_PIXEL_GMS, true))
             return;
         for (String key : GMS_SPOOF_KEYS) {
             setPropValue(key, SystemProperties.get(PROP_HOOKS + key));
