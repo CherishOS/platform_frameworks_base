@@ -375,6 +375,7 @@ constructor(
             }
             
             override fun onUiModeChanged() {
+                updateQsHeaderClockDateVisibility()
                 updateShadeHeaderColors()
                 updateQsBatteryStyle()
                 updateResources()
