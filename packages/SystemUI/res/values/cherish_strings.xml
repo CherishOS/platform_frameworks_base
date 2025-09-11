@@ -231,4 +231,10 @@
     <string name="lunar_date_format">%1$s</string>
     <string name="qs_lunar_date_title">Lunar Date</string>
     <string name="qs_lunar_date_summary">Show lunar date in QS header</string>
+
+    <!-- Flashlight strength dialog -->
+    <string name="flashlight_strength_dialog_title">Flashlight brightness</string>
+    <string name="flashlight_strength_off">Off</string>
+    <string name="flashlight_turn_on">Turn On</string>
+    <string name="flashlight_turn_off">Turn Off</string>
 </resources>
