@@ -35,6 +35,7 @@ import android.animation.ValueAnimator;
 import android.app.Fragment;
 import android.content.ContentResolver;
 import android.content.res.Resources;
+import android.database.ContentObserver;
 import android.graphics.Insets;
 import android.graphics.Rect;
 import android.graphics.Region;
