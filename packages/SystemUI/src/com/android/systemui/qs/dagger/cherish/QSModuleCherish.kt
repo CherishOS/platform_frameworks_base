@@ -31,6 +31,7 @@ import com.android.systemui.qs.tiles.CPUInfoTile
 import com.android.systemui.qs.tiles.HeadsUpTile
 import com.android.systemui.qs.tiles.RefreshRateTile
 import com.android.systemui.qs.tiles.SyncTile
+import com.android.systemui.qs.tiles.VolumeQSTile
 import com.android.systemui.qs.tiles.WifiTile
 import com.android.systemui.qs.tiles.NfcTile
 import com.android.systemui.qs.tiles.ReadingModeTile
@@ -130,6 +131,12 @@ interface QSModuleCherish {
     @IntoMap
     @StringKey(CPUInfoTile.TILE_SPEC)
     fun CPUInfoTile(cpuInfoTile: CPUInfoTile): QSTileImpl<*>
+    
+    /** Inject VolumeQSTile into tileMap in QSModule */
+    @Binds
+    @IntoMap
+    @StringKey(VolumeQSTile.TILE_SPEC)
+    fun bindVolumeQSTile(volumeQSTile: VolumeQSTile): QSTileImpl<*>
 
     /** Inject FPSInfoTile into tileMap in QSModule */
     @Binds
