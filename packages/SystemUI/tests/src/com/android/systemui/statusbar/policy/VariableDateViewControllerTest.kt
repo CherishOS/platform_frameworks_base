@@ -23,6 +23,7 @@ import android.view.View
 import androidx.test.filters.SmallTest
 import com.android.systemui.SysuiTestCase
 import com.android.systemui.broadcast.BroadcastDispatcher
+import com.android.systemui.res.R
 import com.android.systemui.shade.domain.interactor.ShadeInteractor
 import com.android.systemui.util.mockito.any
 import com.android.systemui.util.mockito.capture
@@ -37,6 +38,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.Mockito.anyString
+import org.mockito.Mockito.clearInvocations
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
@@ -89,6 +91,7 @@ class VariableDateViewControllerTest : SysuiTestCase() {
         `when`(view.longerPattern).thenReturn(LONG_PATTERN)
         `when`(view.shorterPattern).thenReturn(SHORT_PATTERN)
         `when`(view.handler).thenReturn(testableHandler)
+        `when`(view.resources).thenReturn(mContext.resources)
 
         `when`(view.setText(anyString())).thenAnswer {
             lastText = it.arguments[0] as? String
@@ -196,6 +199,32 @@ class VariableDateViewControllerTest : SysuiTestCase() {
         onMeasureListenerCaptor.value.onMeasureAction(10000, View.MeasureSpec.AT_MOST)
         testableLooper.processAllMessages()
         assertThat(lastText).isEqualTo(shortText)
+    }
+
+    @Test
+    fun testLunarDateShownWhenEnabled() {
+        overrideResource(R.bool.config_show_qs_lunar_calendar, true)
+
+        controller.onViewDetached()
+        clearInvocations(view)
+        lastText = null
+
+        controller = VariableDateViewController(
+            systemClock,
+            broadcastDispatcher,
+            shadeInteractor,
+            mock(),
+            testableHandler,
+            view
+        )
+
+        controller.init()
+        testableLooper.processAllMessages()
+
+        val lunarText = LunarDateFormatter(mContext.resources).getFormattedLunarDate(TIME_STAMP)!!
+        val expectedText =
+            mContext.getString(R.string.qs_lunar_date_combination, longText, lunarText)
+        assertThat(lastText).isEqualTo(expectedText)
     }
 
     @Test

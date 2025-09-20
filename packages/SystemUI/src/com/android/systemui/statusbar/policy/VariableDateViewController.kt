@@ -92,6 +92,8 @@ class VariableDateViewController(
     view: VariableDateView
 ) : ViewController<VariableDateView>(view) {
 
+    private val lunarDateFormatter = LunarDateFormatter(view.resources)
+
     private var dateFormat: DateFormat? = null
     private var datePattern = view.longerPattern
         set(value) {
@@ -199,10 +201,49 @@ class VariableDateViewController(
 
         currentTime.time = systemClock.currentTimeMillis()
 
-        val text = getTextForFormat(currentTime, dateFormat!!)
+        val text = getDisplayTextForCurrentPattern()
         if (text != lastText) {
             mView.setText(text)
             lastText = text
+        }
+    }
+
+    private fun getDisplayTextForCurrentPattern(): String {
+        val pattern = datePattern
+        if (pattern.isEmpty()) {
+            return ""
+        }
+
+        val format = dateFormat ?: getFormatFromPattern(pattern)
+        val dateText = getTextForFormat(currentTime, format)
+        if (dateText.isEmpty()) {
+            return dateText
+        }
+
+        val lunarText = lunarDateFormatter.getFormattedLunarDate(currentTime.time)
+        return if (lunarText.isNullOrEmpty()) {
+            dateText
+        } else {
+            mView.resources.getString(R.string.qs_lunar_date_combination, dateText, lunarText)
+        }
+    }
+
+    private fun getCombinedTextForPattern(pattern: String): String {
+        if (pattern.isEmpty()) {
+            return ""
+        }
+
+        val format = getFormatFromPattern(pattern)
+        val dateText = getTextForFormat(currentTime, format)
+        if (dateText.isEmpty()) {
+            return ""
+        }
+
+        val lunarText = lunarDateFormatter.getFormattedLunarDate(currentTime.time)
+        return if (lunarText.isNullOrEmpty()) {
+            dateText
+        } else {
+            mView.resources.getString(R.string.qs_lunar_date_combination, dateText, lunarText)
         }
     }
 
@@ -216,14 +257,15 @@ class VariableDateViewController(
         }
         if (DEBUG) Log.d(TAG, "Width changed. Maybe changing pattern")
         // Start with longer pattern and see what fits
-        var text = getTextForFormat(currentTime, getFormatFromPattern(longerPattern))
+        currentTime.time = systemClock.currentTimeMillis()
+        var text = getCombinedTextForPattern(longerPattern)
         var length = mView.getDesiredWidthForText(text)
         if (length <= availableWidth) {
             changePattern(longerPattern)
             return
         }
 
-        text = getTextForFormat(currentTime, getFormatFromPattern(shorterPattern))
+        text = getCombinedTextForPattern(shorterPattern)
         length = mView.getDesiredWidthForText(text)
         if (length <= availableWidth) {
             changePattern(shorterPattern)

@@ -960,6 +960,11 @@
     <!-- QuickSettings: Secondary text for when the Dark theme or some other tile will be on until bedtime ends. [CHAR LIMIT=40] -->
     <string name="quick_settings_dark_mode_secondary_label_until_bedtime_ends">Until bedtime ends</string>
 
+    <!-- QuickSettings: Format for the lunar calendar date shown alongside the status date in QS header. -->
+    <string name="qs_lunar_date_format">Lunar: %1$02d/%2$02d</string>
+    <!-- QuickSettings: Combines the standard date and the lunar date in the QS header. -->
+    <string name="qs_lunar_date_combination">%1$s • %2$s</string>
+
     <!-- QuickSettings: NFC tile [CHAR LIMIT=NONE] -->
     <string name="quick_settings_nfc_label">NFC</string>
     <!-- QuickSettings: NFC (off) [CHAR LIMIT=NONE] -->
