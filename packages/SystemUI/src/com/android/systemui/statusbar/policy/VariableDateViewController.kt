@@ -20,6 +20,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.database.ContentObserver
 import android.icu.text.DateFormat
 import android.icu.text.DisplayContext
 import android.icu.util.Calendar
@@ -29,6 +30,8 @@ import android.os.UserHandle
 import android.text.TextUtils
 import android.util.Log
 import android.view.View.MeasureSpec
+import android.net.Uri
+import android.provider.Settings
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
@@ -93,6 +96,17 @@ class VariableDateViewController(
 ) : ViewController<VariableDateView>(view) {
 
     private val lunarDateFormatter = LunarDateFormatter(view.resources)
+    private val contentResolver = view.context.contentResolver
+    private val lunarDateSettingUri: Uri =
+        Settings.System.getUriFor(Settings.System.QS_SHOW_LUNAR_DATE)
+    private var lunarDateEnabled = view.resources.getBoolean(R.bool.config_show_qs_lunar_calendar)
+    private val lunarDateObserver =
+        object : ContentObserver(timeTickHandler) {
+            override fun onChange(selfChange: Boolean, uri: Uri?) {
+                updateLunarDateEnabled(triggerRefresh = true)
+            }
+        }
+    private var lunarDateObserverRegistered = false
 
     private var dateFormat: DateFormat? = null
     private var datePattern = view.longerPattern
@@ -135,6 +149,8 @@ class VariableDateViewController(
             // In that case, do not post anything.
             if (handler == null) {
                 shadeLogger.d("VariableDateViewController received intent but handler was null")
+            } else if (Intent.ACTION_USER_SWITCHED == action) {
+                handler.post { updateLunarDateEnabled(triggerRefresh = true) }
             } else if (
                     Intent.ACTION_TIME_TICK == action ||
                     Intent.ACTION_TIME_CHANGED == action ||
@@ -169,16 +185,35 @@ class VariableDateViewController(
         }
     }
 
+    override fun onInit() {
+        super.onInit()
+        updateLunarDateEnabled(triggerRefresh = false)
+    }
+
     override fun onViewAttached() {
         val filter = IntentFilter().apply {
             addAction(Intent.ACTION_TIME_TICK)
             addAction(Intent.ACTION_TIME_CHANGED)
             addAction(Intent.ACTION_TIMEZONE_CHANGED)
             addAction(Intent.ACTION_LOCALE_CHANGED)
+            addAction(Intent.ACTION_USER_SWITCHED)
         }
 
         broadcastDispatcher.registerReceiver(intentReceiver, filter,
                 HandlerExecutor(timeTickHandler), UserHandle.SYSTEM)
+        if (
+            mView.resources.getBoolean(R.bool.config_show_qs_lunar_calendar) &&
+                !lunarDateObserverRegistered
+        ) {
+            contentResolver.registerContentObserver(
+                lunarDateSettingUri,
+                false,
+                lunarDateObserver,
+                UserHandle.USER_ALL
+            )
+            lunarDateObserverRegistered = true
+        }
+        updateLunarDateEnabled(triggerRefresh = false)
         mView.repeatWhenAttached {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 shadeInteractor.qsExpansion.collect(::onQsExpansionFractionChanged)
@@ -190,6 +225,10 @@ class VariableDateViewController(
 
     override fun onViewDetached() {
         dateFormat = null
+        if (lunarDateObserverRegistered) {
+            contentResolver.unregisterContentObserver(lunarDateObserver)
+            lunarDateObserverRegistered = false
+        }
         mView.onAttach(null)
         broadcastDispatcher.unregisterReceiver(intentReceiver)
     }
@@ -208,6 +247,31 @@ class VariableDateViewController(
         }
     }
 
+    private fun updateLunarDateEnabled(triggerRefresh: Boolean) {
+        val configEnabled = mView.resources.getBoolean(R.bool.config_show_qs_lunar_calendar)
+        val defaultValue = if (configEnabled) 1 else 0
+        val enabled =
+            configEnabled &&
+                Settings.System.getIntForUser(
+                    contentResolver,
+                    Settings.System.QS_SHOW_LUNAR_DATE,
+                    defaultValue,
+                    UserHandle.USER_CURRENT
+                ) == 1
+        val changed = enabled != lunarDateEnabled
+        lunarDateEnabled = enabled
+        lunarDateFormatter.setEnabled(enabled)
+
+        if ((changed || triggerRefresh) && isAttachedToWindow) {
+            post {
+                if (lastWidth != Integer.MAX_VALUE) {
+                    maybeChangeFormat(lastWidth)
+                }
+                updateClock()
+            }
+        }
+    }
+
     private fun getDisplayTextForCurrentPattern(): String {
         val pattern = datePattern
         if (pattern.isEmpty()) {
@@ -220,7 +284,12 @@ class VariableDateViewController(
             return dateText
         }
 
-        val lunarText = lunarDateFormatter.getFormattedLunarDate(currentTime.time)
+        val lunarText =
+            if (lunarDateEnabled) {
+                lunarDateFormatter.getFormattedLunarDate(currentTime.time)
+            } else {
+                null
+            }
         return if (lunarText.isNullOrEmpty()) {
             dateText
         } else {
@@ -239,7 +308,12 @@ class VariableDateViewController(
             return ""
         }
 
-        val lunarText = lunarDateFormatter.getFormattedLunarDate(currentTime.time)
+        val lunarText =
+            if (lunarDateEnabled) {
+                lunarDateFormatter.getFormattedLunarDate(currentTime.time)
+            } else {
+                null
+            }
         return if (lunarText.isNullOrEmpty()) {
             dateText
         } else {

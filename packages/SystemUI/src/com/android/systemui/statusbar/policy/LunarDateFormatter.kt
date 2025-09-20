@@ -29,12 +29,19 @@ class LunarDateFormatter(private val resources: Resources) {
 
     private val calendar: ChineseCalendar = ChineseCalendar()
     private val vietnameseLanguage = Locale("vi").language
+    private val configEnabled = resources.getBoolean(R.bool.config_show_qs_lunar_calendar)
+    private var isEnabled = configEnabled
+
+    /** Sets whether the formatter should output the lunar date in addition to honoring config. */
+    fun setEnabled(enabled: Boolean) {
+        isEnabled = configEnabled && enabled
+    }
 
     /**
      * Returns the formatted lunar calendar date for [timeInMillis] or `null` when disabled.
      */
     fun getFormattedLunarDate(timeInMillis: Long): String? {
-        if (!resources.getBoolean(R.bool.config_show_qs_lunar_calendar)) {
+        if (!isEnabled) {
             return null
         }
 

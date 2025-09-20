@@ -17,6 +17,8 @@
 package com.android.systemui.statusbar.policy
 
 import android.os.Handler
+import android.os.UserHandle
+import android.provider.Settings
 import android.testing.AndroidTestingRunner
 import android.testing.TestableLooper
 import android.view.View
@@ -204,6 +206,12 @@ class VariableDateViewControllerTest : SysuiTestCase() {
     @Test
     fun testLunarDateShownWhenEnabled() {
         overrideResource(R.bool.config_show_qs_lunar_calendar, true)
+        Settings.System.putIntForUser(
+            mContext.contentResolver,
+            Settings.System.QS_SHOW_LUNAR_DATE,
+            1,
+            UserHandle.USER_CURRENT
+        )
 
         controller.onViewDetached()
         clearInvocations(view)
@@ -225,6 +233,101 @@ class VariableDateViewControllerTest : SysuiTestCase() {
         val expectedText =
             mContext.getString(R.string.qs_lunar_date_combination, longText, lunarText)
         assertThat(lastText).isEqualTo(expectedText)
+
+        Settings.System.putIntForUser(
+            mContext.contentResolver,
+            Settings.System.QS_SHOW_LUNAR_DATE,
+            0,
+            UserHandle.USER_CURRENT
+        )
+    }
+
+    @Test
+    fun testLunarDateHiddenWhenSettingDisabled() {
+        overrideResource(R.bool.config_show_qs_lunar_calendar, true)
+        Settings.System.putIntForUser(
+            mContext.contentResolver,
+            Settings.System.QS_SHOW_LUNAR_DATE,
+            0,
+            UserHandle.USER_CURRENT
+        )
+
+        controller.onViewDetached()
+        clearInvocations(view)
+        lastText = null
+
+        controller = VariableDateViewController(
+            systemClock,
+            broadcastDispatcher,
+            shadeInteractor,
+            mock(),
+            testableHandler,
+            view
+        )
+
+        controller.init()
+        testableLooper.processAllMessages()
+
+        assertThat(lastText).isEqualTo(longText)
+    }
+
+    @Test
+    fun testLunarDateUpdatesWhenSettingChanges() {
+        overrideResource(R.bool.config_show_qs_lunar_calendar, true)
+        Settings.System.putIntForUser(
+            mContext.contentResolver,
+            Settings.System.QS_SHOW_LUNAR_DATE,
+            1,
+            UserHandle.USER_CURRENT
+        )
+
+        controller.onViewDetached()
+        clearInvocations(view)
+        lastText = null
+
+        controller = VariableDateViewController(
+            systemClock,
+            broadcastDispatcher,
+            shadeInteractor,
+            mock(),
+            testableHandler,
+            view
+        )
+
+        controller.init()
+        testableLooper.processAllMessages()
+
+        val lunarText = LunarDateFormatter(mContext.resources).getFormattedLunarDate(TIME_STAMP)!!
+        val expectedWithLunar =
+            mContext.getString(R.string.qs_lunar_date_combination, longText, lunarText)
+        assertThat(lastText).isEqualTo(expectedWithLunar)
+
+        Settings.System.putIntForUser(
+            mContext.contentResolver,
+            Settings.System.QS_SHOW_LUNAR_DATE,
+            0,
+            UserHandle.USER_CURRENT
+        )
+        testableLooper.processAllMessages()
+        testableLooper.processAllMessages()
+        assertThat(lastText).isEqualTo(longText)
+
+        Settings.System.putIntForUser(
+            mContext.contentResolver,
+            Settings.System.QS_SHOW_LUNAR_DATE,
+            1,
+            UserHandle.USER_CURRENT
+        )
+        testableLooper.processAllMessages()
+        testableLooper.processAllMessages()
+        assertThat(lastText).isEqualTo(expectedWithLunar)
+
+        Settings.System.putIntForUser(
+            mContext.contentResolver,
+            Settings.System.QS_SHOW_LUNAR_DATE,
+            0,
+            UserHandle.USER_CURRENT
+        )
     }
 
     @Test

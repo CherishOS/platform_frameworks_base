@@ -44,6 +44,16 @@ class LunarDateFormatterTest : SysuiTestCase() {
     }
 
     @Test
+    fun getFormattedLunarDate_respectsFormatterToggle() {
+        overrideResource(R.bool.config_show_qs_lunar_calendar, true)
+
+        val formatter = LunarDateFormatter(mContext.resources)
+        formatter.setEnabled(false)
+
+        assertThat(formatter.getFormattedLunarDate(0)).isNull()
+    }
+
+    @Test
     fun getFormattedLunarDate_formatsNumericValuesByDefault() {
         overrideResource(R.bool.config_show_qs_lunar_calendar, true)
         val timeZone = TimeZone.getTimeZone("Asia/Ho_Chi_Minh")

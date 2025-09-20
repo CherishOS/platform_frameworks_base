@@ -7383,6 +7383,13 @@ public final class Settings {
         public static final String QS_SHOW_BATTERY_PERCENT = "qs_show_battery_percent";
 
         /**
+         * Whether to append the lunar calendar date to the Quick Settings header date.
+         * 0 = disabled, 1 = enabled.
+         * @hide
+         */
+        public static final String QS_SHOW_LUNAR_DATE = "qs_show_lunar_date";
+
+        /**
          * Whether to allow one finger quick settings expansion on the side of the statusbar.
          * 0 = 0ff, 1 = right, 2 = left, 3 = both
          * @hide
