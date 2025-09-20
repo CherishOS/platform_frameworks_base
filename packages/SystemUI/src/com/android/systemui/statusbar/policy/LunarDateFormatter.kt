@@ -20,11 +20,15 @@ import android.content.res.Resources
 import android.icu.util.Calendar
 import android.icu.util.ChineseCalendar
 import com.android.systemui.res.R
+import java.util.Locale
 
 /**
  * Helper that formats the lunar calendar date for the QS header.
  */
 class LunarDateFormatter(private val resources: Resources) {
+
+    private val calendar: ChineseCalendar = ChineseCalendar()
+    private val vietnameseLanguage = Locale("vi").language
 
     /**
      * Returns the formatted lunar calendar date for [timeInMillis] or `null` when disabled.
@@ -34,12 +38,54 @@ class LunarDateFormatter(private val resources: Resources) {
             return null
         }
 
-        val calendar = ChineseCalendar()
         calendar.timeInMillis = timeInMillis
 
         val day = calendar.get(Calendar.DAY_OF_MONTH)
         val month = calendar.get(Calendar.MONTH) + 1
+        val isLeapMonth = calendar.get(ChineseCalendar.IS_LEAP_MONTH) == 1
 
-        return resources.getString(R.string.qs_lunar_date_format, day, month)
+        val locale = primaryLocale()
+        return if (locale.language.equals(vietnameseLanguage, ignoreCase = true)) {
+            formatVietnamese(day, month, isLeapMonth)
+        } else {
+            formatDefault(day, month, isLeapMonth)
+        }
+    }
+
+    private fun formatDefault(day: Int, month: Int, isLeapMonth: Boolean): String {
+        val base = resources.getString(R.string.qs_lunar_date_format, day, month)
+        return appendLeapSuffixIfNeeded(base, isLeapMonth)
+    }
+
+    private fun formatVietnamese(day: Int, month: Int, isLeapMonth: Boolean): String {
+        val dayNames = resources.getStringArray(R.array.qs_lunar_vietnamese_day_names)
+        val monthNames = resources.getStringArray(R.array.qs_lunar_vietnamese_month_names)
+        if (day !in 1..dayNames.size || month !in 1..monthNames.size) {
+            return formatDefault(day, month, isLeapMonth)
+        }
+
+        val base = resources.getString(
+            R.string.qs_lunar_date_vietnamese_format,
+            dayNames[day - 1],
+            monthNames[month - 1]
+        )
+        return appendLeapSuffixIfNeeded(base, isLeapMonth)
+    }
+
+    private fun appendLeapSuffixIfNeeded(text: String, isLeapMonth: Boolean): String {
+        if (!isLeapMonth) {
+            return text
+        }
+        val suffix = resources.getString(R.string.qs_lunar_date_leap_suffix)
+        return text + suffix
+    }
+
+    private fun primaryLocale(): Locale {
+        val locales = resources.configuration.locales
+        if (!locales.isEmpty) {
+            return locales[0]
+        }
+        @Suppress("DEPRECATION")
+        return resources.configuration.locale
     }
 }
