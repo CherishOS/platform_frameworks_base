@@ -70,6 +70,18 @@
         />
     </Constraint>
 
+    <Constraint
+        android:id="@+id/lunar_date">
+        <Layout
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/new_qs_header_non_clickable_element_height"
+            app:layout_constraintStart_toEndOf="@id/date"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/carrier_group"
+            android:layout_marginStart="8dp"
+        />
+    </Constraint>
+
     <!-- ShadeHeaderController helps with managing clock width to layout this view -->
     <Constraint
         android:id="@+id/carrier_group">
@@ -94,7 +106,7 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/new_qs_header_non_clickable_element_height"
             app:layout_constraintWidth_default="wrap"
-            app:layout_constraintStart_toEndOf="@id/date"
+            app:layout_constraintStart_toEndOf="@id/lunar_date"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/date"
             app:layout_constraintBottom_toBottomOf="@id/date"
