@@ -184,4 +184,9 @@
     <string name="screenrecord_delete_label">Xóa</string>
     <!-- A toast message shown after successfully deleting a screen recording [CHAR LIMIT=NONE] -->
     <string name="screenrecord_delete_description">Đã xóa ghi màn hình</string>
+
+    <!-- Lunar date display strings -->
+    <string name="lunar_date_format">%1$s</string>
+    <string name="qs_lunar_date_title">Ngày Âm lịch</string>
+    <string name="qs_lunar_date_summary">Hiển thị ngày âm lịch trong QS header</string>
 </resources>

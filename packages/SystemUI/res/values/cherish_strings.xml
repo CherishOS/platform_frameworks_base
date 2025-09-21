@@ -226,4 +226,9 @@
     <string name="screenrecord_delete_label">Delete</string>
     <!-- A toast message shown after successfully deleting a screen recording [CHAR LIMIT=NONE] -->
     <string name="screenrecord_delete_description">Screen recording deleted</string>
+
+    <!-- Lunar date display strings -->
+    <string name="lunar_date_format">%1$s</string>
+    <string name="qs_lunar_date_title">Lunar Date</string>
+    <string name="qs_lunar_date_summary">Show lunar date in QS header</string>
 </resources>

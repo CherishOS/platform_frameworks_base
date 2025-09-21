@@ -118,6 +118,21 @@ frame when animating QS <-> QQS transition
         app:shortDatePattern="@string/abbrev_month_day_no_year"
     />
 
+    <TextView
+        android:id="@+id/lunar_date"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_gravity="start|center_vertical"
+        android:gravity="center_vertical"
+        android:singleLine="true"
+        android:textDirection="locale"
+        android:textAppearance="@style/TextAppearance.QS.Status"
+        android:textSize="12sp"
+        android:alpha="0.8"
+        android:visibility="gone"
+        android:layout_marginStart="6dp"
+    />
+
     <include
         android:id="@+id/carrier_group"
         layout="@layout/shade_carrier_group"

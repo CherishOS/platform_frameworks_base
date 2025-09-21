@@ -29,6 +29,8 @@ import android.graphics.Color
 import android.graphics.Insets
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.Trace
 import android.os.Trace.TRACE_TAG_APP
 import android.os.UserHandle;
@@ -92,6 +94,7 @@ import com.android.systemui.statusbar.policy.VariableDateView
 import com.android.systemui.statusbar.policy.VariableDateViewController
 import com.android.systemui.tuner.TunerService
 import com.android.systemui.tuner.TunerService.Tunable
+import com.android.systemui.util.LunarUtils
 import com.android.systemui.util.ViewController
 import dagger.Lazy
 import java.io.PrintWriter
@@ -131,6 +134,7 @@ constructor(
     private val activityStarter: ActivityStarter,
     private val statusOverlayHoverListenerFactory: StatusOverlayHoverListenerFactory,
     private val tunerService: TunerService,
+    private val lunarUtils: LunarUtils,
 ) : ViewController<View>(header), Dumpable, TunerService.Tunable, View.OnClickListener {
 
     private val statusBarContentInsetsProvider
@@ -169,6 +173,9 @@ constructor(
         internal val QS_HEADER_CLOCK_STYLE =
             "system:" + "qs_header_clock_style"
 
+        internal val QS_HEADER_LUNAR_DATE =
+            "system:" + "qs_header_lunar_date"
+
         private fun Int.stateToString() =
             when (this) {
                 QQS_HEADER_CONSTRAINT -> "QQS Header"
@@ -187,6 +194,7 @@ constructor(
     private var qsBatteryStyle = Settings.System.getIntForUser(
              context.contentResolver, Settings.System.QS_BATTERY_STYLE, -1, UserHandle.USER_CURRENT)
     private var qsClockStyle = 0
+    private var qsLunarDateEnabled = false
 
     private lateinit var iconManager: TintedIconManager
     private lateinit var carrierIconSlots: List<String>
@@ -195,6 +203,7 @@ constructor(
     private val batteryIcon: BatteryMeterView = header.requireViewById(R.id.batteryRemainingIcon)
     private val clock: Clock = header.requireViewById(R.id.clock)
     private val date: TextView = header.requireViewById(R.id.date)
+    private val lunarDate: TextView = header.requireViewById(R.id.lunar_date)
     private val iconContainer: StatusIconContainer = header.requireViewById(R.id.statusIcons)
     private val mShadeCarrierGroup: ShadeCarrierGroup = header.requireViewById(R.id.carrier_group)
     private val systemIconsHoverContainer: View =
@@ -353,7 +362,9 @@ constructor(
             override fun onDensityOrFontScaleChanged() {
                 clock.setTextAppearance(R.style.TextAppearance_QS_Status)
                 date.setTextAppearance(R.style.TextAppearance_QS_Status)
+                lunarDate.setTextAppearance(R.style.TextAppearance_QS_Status)
                 updateQsHeaderClockDateVisibility()
+                updateLunarDateDisplay()
                 mShadeCarrierGroup.updateTextAppearance(R.style.TextAppearance_QS_Status)
                 loadConstraints()
                 header.minHeight =
@@ -367,16 +378,19 @@ constructor(
             override fun onThemeChanged() {
                 updateShadeHeaderColors()
                 updateQsHeaderClockDateVisibility()
+                updateLunarDateDisplay()
                 updateResources()
                 updateQsHeaderClockDateVisibility()
                 clock.setTextAppearance(R.style.TextAppearance_QS_Status)
                 date.setTextAppearance(R.style.TextAppearance_QS_Status)
+                lunarDate.setTextAppearance(R.style.TextAppearance_QS_Status)
                 mShadeCarrierGroup.updateTextAppearance(R.style.TextAppearance_QS_Status)                
             }
             
             override fun onUiModeChanged() {
                 updateQsHeaderClockDateVisibility()
                 updateShadeHeaderColors()
+                updateLunarDateDisplay()
                 updateQsBatteryStyle()
                 updateResources()
             }
@@ -385,6 +399,7 @@ constructor(
     fun updateShadeHeaderColors() {
         clock.setTextAppearance(R.style.TextAppearance_QS_Status)
         date.setTextAppearance(R.style.TextAppearance_QS_Status)
+        lunarDate.setTextAppearance(R.style.TextAppearance_QS_Status)
         mShadeCarrierGroup.updateTextAppearance(R.style.TextAppearance_QS_Status)
         updateIconManagerColors()
     }
@@ -412,6 +427,17 @@ constructor(
             nextAlarmIntent = nextAlarm?.showIntent
         }
 
+    private val lunarDateHandler: Handler = Handler(Looper.getMainLooper())
+    private val lunarDateUpdateRunnable: Runnable = object : Runnable {
+    override fun run() {
+        updateLunarDateDisplay()
+        // Schedule next update at midnight
+        val now = System.currentTimeMillis()
+        val nextMidnight = ((now / (24 * 60 * 60 * 1000)) + 1) * (24 * 60 * 60 * 1000)
+        lunarDateHandler.postDelayed(this, nextMidnight - now)
+    }
+}
+
     fun updateQsBatteryStyle() {
         if (qsBatteryStyle >= 0)  {
             batteryIcon.setBatteryStyle(qsBatteryStyle)
@@ -419,6 +445,19 @@ constructor(
             batteryIcon.setBatteryStyle(batteryStyle)
         }
         batteryIcon.setBatteryPercent(qsBatteryPercent)
+    }
+
+    fun updateLunarDateDisplay() {
+        if (qsLunarDateEnabled) {
+            val currentLocale = context.resources.configuration.locale
+            val localeString = currentLocale?.toString() ?: "en"
+            val lunarDateText = lunarUtils.getCurrentLunarDateFormatted(localeString)
+            
+            lunarDate.text = lunarDateText
+            lunarDate.visibility = View.VISIBLE
+        } else {
+            lunarDate.visibility = View.GONE
+        }
     }
     
     fun updateQsHeaderClockDateVisibility() {
@@ -517,11 +556,16 @@ constructor(
 
         updateQsBatteryStyle()
         updateQsHeaderClockDateVisibility()
+        updateLunarDateDisplay()
+        
+        // Start periodic lunar date updates
+        lunarDateHandler.post(lunarDateUpdateRunnable)
 
         tunerService.addTunable(this, QS_BATTERY_STYLE)
         tunerService.addTunable(this, STATUS_BAR_BATTERY_STYLE)
         tunerService.addTunable(this, QS_SHOW_BATTERY_PERCENT)
         tunerService.addTunable(this, QS_HEADER_CLOCK_STYLE)
+        tunerService.addTunable(this, QS_HEADER_LUNAR_DATE)
     }
 
     override fun onViewDetached() {
@@ -534,6 +578,7 @@ constructor(
         nextAlarmController.removeCallback(nextAlarmCallback)
         systemIconsHoverContainer.setOnHoverListener(null)
         tunerService.removeTunable(this)
+        lunarDateHandler.removeCallbacks(lunarDateUpdateRunnable)
     }
 
     override fun onTuningChanged(key: String?, value: String?) {
@@ -556,6 +601,11 @@ constructor(
             QS_HEADER_CLOCK_STYLE -> {
                 qsClockStyle = TunerService.parseInteger(value, 0)
                 updateQsHeaderClockDateVisibility()
+            }
+
+            QS_HEADER_LUNAR_DATE -> {
+                qsLunarDateEnabled = TunerService.parseInteger(value, 0) != 0
+                updateLunarDateDisplay()
             }
 
             else -> return
