@@ -449,9 +449,19 @@ constructor(
 
     fun updateLunarDateDisplay() {
         if (qsLunarDateEnabled) {
-            val currentLocale = context.resources.configuration.locale
-            val localeString = currentLocale?.toString() ?: "en"
-            val lunarDateText = lunarUtils.getCurrentLunarDateFormatted(localeString)
+            val currentLocale = context.resources.configuration.locales.get(0)
+            val localeString = currentLocale?.toString() ?: 
+                context.resources.configuration.locale?.toString() ?: "en"
+            
+            // For testing - force Vietnamese if system language is Vietnamese
+            val testLocale = if (localeString.contains("vi", ignoreCase = true) || 
+                                localeString.contains("VN", ignoreCase = true)) {
+                "vi-VN"
+            } else {
+                localeString
+            }
+            
+            val lunarDateText = lunarUtils.getCurrentLunarDateFormatted(testLocale)
             
             lunarDate.text = lunarDateText
             lunarDate.visibility = View.VISIBLE
