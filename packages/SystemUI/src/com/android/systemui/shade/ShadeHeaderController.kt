@@ -21,8 +21,10 @@ import android.animation.AnimatorListenerAdapter
 import android.annotation.IdRes
 import android.app.PendingIntent
 import android.app.StatusBarManager
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Color
@@ -438,6 +440,19 @@ constructor(
     }
 }
 
+    // BroadcastReceiver for date/time changes
+    private val dateChangeReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            when (intent?.action) {
+                Intent.ACTION_TIME_CHANGED,
+                Intent.ACTION_DATE_CHANGED,
+                Intent.ACTION_TIMEZONE_CHANGED -> {
+                    updateLunarDateDisplay()
+                }
+            }
+        }
+    }
+
     fun updateQsBatteryStyle() {
         if (qsBatteryStyle >= 0)  {
             batteryIcon.setBatteryStyle(qsBatteryStyle)
@@ -568,6 +583,14 @@ constructor(
         updateQsHeaderClockDateVisibility()
         updateLunarDateDisplay()
         
+        // Register BroadcastReceiver for date/time changes
+        val dateChangeFilter = IntentFilter().apply {
+            addAction(Intent.ACTION_TIME_CHANGED)
+            addAction(Intent.ACTION_DATE_CHANGED)
+            addAction(Intent.ACTION_TIMEZONE_CHANGED)
+        }
+        context.registerReceiver(dateChangeReceiver, dateChangeFilter)
+        
         // Start periodic lunar date updates
         lunarDateHandler.post(lunarDateUpdateRunnable)
 
@@ -589,6 +612,13 @@ constructor(
         systemIconsHoverContainer.setOnHoverListener(null)
         tunerService.removeTunable(this)
         lunarDateHandler.removeCallbacks(lunarDateUpdateRunnable)
+        
+        // Unregister BroadcastReceiver
+        try {
+            context.unregisterReceiver(dateChangeReceiver)
+        } catch (e: IllegalArgumentException) {
+            // Receiver was not registered, ignore
+        }
     }
 
     override fun onTuningChanged(key: String?, value: String?) {
