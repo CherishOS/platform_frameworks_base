@@ -32,8 +32,13 @@ class LunarUtils @Inject constructor(private val context: Context) {
 
     companion object {
         private const val PI = Math.PI
-        // Vietnam timezone offset
-        private const val TIME_ZONE = 7.0
+        
+        // Get current system timezone offset in hours
+        private fun getCurrentTimeZoneOffset(): Double {
+            val calendar = Calendar.getInstance()
+            val offsetMs = calendar.timeZone.getOffset(calendar.timeInMillis)
+            return offsetMs / (1000.0 * 60.0 * 60.0) // Convert milliseconds to hours
+        }
     }
 
     data class LunarDate(
@@ -55,14 +60,30 @@ class LunarUtils @Inject constructor(private val context: Context) {
     }
 
     /**
-     * Gets current lunar date
+     * Gets current lunar date - uses system date (not real current time)
      */
     fun getCurrentLunarDate(): LunarDate {
+        // Use system date (which can be changed in Settings)
         val today = Calendar.getInstance()
+        val timeZone = getCurrentTimeZoneOffset()
         return convertSolar2Lunar(
             today.get(Calendar.DAY_OF_MONTH),
             today.get(Calendar.MONTH) + 1,
-            today.get(Calendar.YEAR)
+            today.get(Calendar.YEAR),
+            timeZone
+        )
+    }
+
+    /**
+     * Gets lunar date for specific date
+     */
+    fun getLunarDate(calendar: Calendar): LunarDate {
+        val timeZone = getCurrentTimeZoneOffset()
+        return convertSolar2Lunar(
+            calendar.get(Calendar.DAY_OF_MONTH),
+            calendar.get(Calendar.MONTH) + 1,
+            calendar.get(Calendar.YEAR),
+            timeZone
         )
     }
 
@@ -70,27 +91,28 @@ class LunarUtils @Inject constructor(private val context: Context) {
      * Convert LocalDate to Lunar date
      */
     fun fromLocalDate(date: LocalDate): LunarDate {
-        return convertSolar2Lunar(date.dayOfMonth, date.monthValue, date.year)
+        val timeZone = getCurrentTimeZoneOffset()
+        return convertSolar2Lunar(date.dayOfMonth, date.monthValue, date.year, timeZone)
     }
 
     /**
      * Convert solar date to lunar date using Vietnamese lunar calendar algorithm
      */
-    private fun convertSolar2Lunar(day: Int, month: Int, year: Int): LunarDate {
+    private fun convertSolar2Lunar(day: Int, month: Int, year: Int, timeZone: Double = getCurrentTimeZoneOffset()): LunarDate {
         val dayNumber = jdFromDate(day, month, year)
         val k = ((dayNumber - 2415021.076998695) / 29.530588853).toInt()
-        var monthStart = getNewMoonDay(k + 1, TIME_ZONE)
+        var monthStart = getNewMoonDay(k + 1, timeZone)
         if (monthStart > dayNumber) {
-            monthStart = getNewMoonDay(k, TIME_ZONE)
+            monthStart = getNewMoonDay(k, timeZone)
         }
         
-        var a11 = getLunarMonth11(year, TIME_ZONE)
+        var a11 = getLunarMonth11(year, timeZone)
         val b11 = a11
         val lunarYear: Int
         
         if (a11 >= monthStart) {
             lunarYear = year
-            a11 = getLunarMonth11(year - 1, TIME_ZONE)
+            a11 = getLunarMonth11(year - 1, timeZone)
         } else {
             lunarYear = year + 1
             // b11 is already set
@@ -102,7 +124,7 @@ class LunarUtils @Inject constructor(private val context: Context) {
         var leap = false
         
         if (b11 - a11 > 365) {
-            val leapMonthDiff = getLeapMonthOffset(a11, TIME_ZONE)
+            val leapMonthDiff = getLeapMonthOffset(a11, timeZone)
             if (diff >= leapMonthDiff) {
                 lunarMonth = diff + 10
                 if (diff == leapMonthDiff) leap = true
@@ -182,18 +204,18 @@ class LunarUtils @Inject constructor(private val context: Context) {
     }
 
     private fun formatVietnamese(lunar: LunarDate): String {
-        // Format: "1 thg 8 ÂL" - simplified Vietnamese format without "Mùng"
+        // Format: "- 1 thg 8 ÂL" - add dash prefix for better readability  
         val monthStr = if (lunar.isLeapMonth) {
             "thg ${lunar.month} (N) ÂL" // N = Nhuận
         } else {
             "thg ${lunar.month} ÂL"
         }
         
-        return "${lunar.day} $monthStr"
+        return "- ${lunar.day} $monthStr"
     }
 
     private fun formatEnglish(lunar: LunarDate): String {
-        // Format: "5th Aug LC" - English format
+        // Format: "- 5th Aug LC" - add dash prefix for consistency
         val daySuffix = when (lunar.day % 10) {
             1 -> if (lunar.day == 11) "th" else "st"
             2 -> if (lunar.day == 12) "th" else "nd"
@@ -208,6 +230,6 @@ class LunarUtils @Inject constructor(private val context: Context) {
         val monthStr = monthNames[lunar.month - 1]
         val leapStr = if (lunar.isLeapMonth) " (L)" else "" // L = Leap
         
-        return "${lunar.day}$daySuffix $monthStr$leapStr LC"
+        return "- ${lunar.day}$daySuffix $monthStr$leapStr LC"
     }
 }
