@@ -481,7 +481,17 @@ constructor(
             lunarDate.text = lunarDateText
             lunarDate.visibility = View.VISIBLE
         } else {
-            lunarDate.visibility = View.GONE
+            lunarDate.text = ""
+            lunarDate.visibility = View.INVISIBLE  // Use INVISIBLE instead of GONE to avoid layout issues
+        }
+        
+        // Force invalidate to ensure layout changes are applied immediately
+        lunarDate.invalidate()
+        header.invalidate()
+        
+        // Additional: Force MotionLayout to recalculate
+        header.post {
+            header.requestLayout()
         }
     }
     
@@ -646,6 +656,9 @@ constructor(
             QS_HEADER_LUNAR_DATE -> {
                 qsLunarDateEnabled = TunerService.parseInteger(value, 0) != 0
                 updateLunarDateDisplay()
+                // Force layout refresh
+                header.requestLayout()
+                updateTransition()
             }
 
             else -> return
