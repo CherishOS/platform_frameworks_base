@@ -15,7 +15,10 @@
  */
 package com.android.systemui.statusbar.policy
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.database.ContentObserver
 import android.os.Handler
 import android.os.Looper
@@ -25,8 +28,10 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.TextView
 
 import com.android.systemui.res.R
+import com.android.systemui.util.LunarUtils
 
 class CustomClockViewStub @JvmOverloads constructor(
     context: Context,
@@ -37,6 +42,23 @@ class CustomClockViewStub @JvmOverloads constructor(
     private val settingsObserver: ContentObserver
     private var currentClockView: View? = null
     private var clockStyle = 0
+    private var lunarDateEnabled = false
+    
+    // LunarUtils for lunar date calculation
+    private val lunarUtils = LunarUtils(context)
+    
+    // BroadcastReceiver for date/time changes
+    private val dateChangeReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            when (intent?.action) {
+                Intent.ACTION_TIME_CHANGED,
+                Intent.ACTION_DATE_CHANGED,
+                Intent.ACTION_TIMEZONE_CHANGED -> {
+                    updateLunarDate()
+                }
+            }
+        }
+    }
 
     init {
         settingsObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
@@ -51,22 +73,72 @@ class CustomClockViewStub @JvmOverloads constructor(
         clockStyle = Settings.System.getIntForUser(
             context.contentResolver, "qs_header_clock_style", 0, UserHandle.USER_CURRENT
         )
+        lunarDateEnabled = Settings.System.getIntForUser(
+            context.contentResolver, "qs_header_lunar_date", 0, UserHandle.USER_CURRENT
+        ) != 0
+        
         currentClockView?.let {
             removeView(it)
             currentClockView = null
         }
-        val layoutResId = when (clockStyle) {
-            1 -> R.layout.qs_header_clock_chip
-            2 -> R.layout.qs_header_clock_oos
-            3 -> R.layout.qs_header_clock_analog
-            else -> R.layout.qs_header_clock_simple
+        
+        when (clockStyle) {
+            0 -> {
+                // Default clock - hide custom clock, let ShadeHeaderController handle
+                visibility = View.GONE
+                currentClockView?.visibility = View.GONE
+                return
+            }
+            1 -> {
+                // Chip clock
+                currentClockView = LayoutInflater.from(context).inflate(R.layout.qs_header_clock_chip, this, false)
+            }
+            2 -> {
+                // OOS clock
+                currentClockView = LayoutInflater.from(context).inflate(R.layout.qs_header_clock_oos, this, false)
+            }
+            3 -> {
+                // Analog clock
+                currentClockView = LayoutInflater.from(context).inflate(R.layout.qs_header_clock_analog, this, false)
+            }
+            4 -> {
+                // Simple clock (separate from default)
+                currentClockView = LayoutInflater.from(context).inflate(R.layout.qs_header_clock_simple, this, false)
+            }
         }
+        
         if (clockStyle != 0) {
-            currentClockView = LayoutInflater.from(context).inflate(layoutResId, this, false)
-            addView(currentClockView)
+            currentClockView?.let { 
+                addView(it)
+                updateLunarDate()
+            }
+            visibility = View.VISIBLE
+            currentClockView?.visibility = View.VISIBLE
         }
-        visibility = if (clockStyle == 0) View.GONE else View.VISIBLE
-        currentClockView?.visibility = if (clockStyle == 0) View.GONE else View.VISIBLE
+    }
+    
+    private fun updateLunarDate() {
+        currentClockView?.findViewById<TextView>(R.id.custom_clock_lunar_date)?.let { lunarDateView ->
+            if (lunarDateEnabled) {
+                val currentLocale = context.resources.configuration.locales.get(0)
+                val localeString = currentLocale?.toString() ?: 
+                    context.resources.configuration.locale?.toString() ?: "en"
+                
+                val testLocale = if (localeString.contains("vi", ignoreCase = true) || 
+                                    localeString.contains("VN", ignoreCase = true)) {
+                    "vi-VN"
+                } else {
+                    localeString
+                }
+                
+                val lunarDateText = lunarUtils.getCurrentLunarDateFormatted(testLocale)
+                lunarDateView.text = lunarDateText
+                lunarDateView.visibility = View.VISIBLE
+            } else {
+                lunarDateView.text = ""
+                lunarDateView.visibility = View.GONE
+            }
+        }
     }
 
     override fun onAttachedToWindow() {
@@ -76,11 +148,32 @@ class CustomClockViewStub @JvmOverloads constructor(
             false,
             settingsObserver
         )
+        context.contentResolver.registerContentObserver(
+            Settings.System.getUriFor("qs_header_lunar_date"),
+            false,
+            settingsObserver
+        )
+        
+        // Register BroadcastReceiver for date/time changes
+        val dateChangeFilter = IntentFilter().apply {
+            addAction(Intent.ACTION_TIME_CHANGED)
+            addAction(Intent.ACTION_DATE_CHANGED)
+            addAction(Intent.ACTION_TIMEZONE_CHANGED)
+        }
+        context.registerReceiver(dateChangeReceiver, dateChangeFilter)
+        
         updateLayout()
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         context.contentResolver.unregisterContentObserver(settingsObserver)
+        
+        // Unregister BroadcastReceiver
+        try {
+            context.unregisterReceiver(dateChangeReceiver)
+        } catch (e: IllegalArgumentException) {
+            // Receiver was not registered, ignore
+        }
     }
 }

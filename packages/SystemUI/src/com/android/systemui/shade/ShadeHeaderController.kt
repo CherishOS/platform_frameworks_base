@@ -206,6 +206,7 @@ constructor(
     private val clock: Clock = header.requireViewById(R.id.clock)
     private val date: TextView = header.requireViewById(R.id.date)
     private val lunarDate: TextView = header.requireViewById(R.id.lunar_date)
+    private val customClock: View = header.requireViewById(R.id.custom_clock)
     private val iconContainer: StatusIconContainer = header.requireViewById(R.id.statusIcons)
     private val mShadeCarrierGroup: ShadeCarrierGroup = header.requireViewById(R.id.carrier_group)
     private val systemIconsHoverContainer: View =
@@ -463,6 +464,15 @@ constructor(
     }
 
     fun updateLunarDateDisplay() {
+        // Check if custom clock is active - if so, don't show default lunar date
+        if (qsClockStyle != 0) {
+            // Custom clock is active, always hide default lunar date
+            lunarDate.text = ""
+            lunarDate.visibility = View.INVISIBLE
+            return
+        }
+        
+        // Default clock is active, show/hide lunar date based on setting
         if (qsLunarDateEnabled) {
             val currentLocale = context.resources.configuration.locales.get(0)
             val localeString = currentLocale?.toString() ?: 
@@ -497,11 +507,36 @@ constructor(
     
     fun updateQsHeaderClockDateVisibility() {
         if (qsClockStyle != 0) {
+            // When custom clock is enabled, hide default clock and date
             val color = Color.TRANSPARENT
             val colorStateList = ColorStateList.valueOf(color)
             clock.setTextColor(colorStateList)
             date.setTextColor(colorStateList)
-        }  
+            
+            // Show custom clock
+            customClock.visibility = View.VISIBLE
+            
+            // Always hide default lunar date when custom clock is active
+            lunarDate.text = ""
+            lunarDate.visibility = View.INVISIBLE  // Force hide regardless of lunar setting
+        } else {
+            // When custom clock is disabled, restore default clock and date colors
+            // Use proper theme colors that work with light/dark mode
+            clock.setTextColor(Utils.getColorAttrDefaultColor(context, android.R.attr.textColorPrimary))
+            date.setTextColor(Utils.getColorAttrDefaultColor(context, android.R.attr.textColorPrimary))
+            
+            // Hide custom clock
+            customClock.visibility = View.GONE
+            
+            // Update default lunar date display (respects lunar date setting)
+            updateLunarDateDisplay()
+        }
+        
+        // Force layout refresh to prevent conflicts
+        header.invalidate()
+        header.post {
+            header.requestLayout()
+        }
     }
 
     override fun onInit() {
@@ -655,7 +690,15 @@ constructor(
 
             QS_HEADER_LUNAR_DATE -> {
                 qsLunarDateEnabled = TunerService.parseInteger(value, 0) != 0
-                updateLunarDateDisplay()
+                // Update lunar date display with proper conflict resolution
+                if (qsClockStyle != 0) {
+                    // Custom clock is active - don't show default lunar date
+                    lunarDate.text = ""
+                    lunarDate.visibility = View.INVISIBLE
+                } else {
+                    // Default clock is active - update lunar date based on setting
+                    updateLunarDateDisplay()
+                }
                 // Force layout refresh
                 header.requestLayout()
                 updateTransition()

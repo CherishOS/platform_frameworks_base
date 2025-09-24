@@ -2,18 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:gravity="center_vertical">
 
     <AnalogClock
         android:layout_marginTop="6dp"
-        android:layout_width="42dp"
-        android:layout_height="42dp"
-        android:layout_marginEnd="8dp" />
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:layout_marginEnd="12dp" />
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical"
+        android:layout_height="wrap_content"
+        android:gravity="start"
         android:orientation="vertical">
 
         <TextClock
@@ -38,6 +39,20 @@
             android:textAlignment="viewStart"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="14dp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:layout_marginBottom="2dp" />
+
+        <!-- Lunar Date TextView -->
+        <TextView
+            android:id="@+id/custom_clock_lunar_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:singleLine="true"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="12dp"
+            android:alpha="0.8"
+            android:visibility="gone" />
+
     </LinearLayout>
 </LinearLayout>
