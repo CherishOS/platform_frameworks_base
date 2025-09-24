@@ -43,19 +43,41 @@
             android:textStyle="bold" />
     </FrameLayout>
 
-    <TextClock
-        android:layout_marginTop="8dp"
-        android:id="@+id/oos_date"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_gravity="center_vertical"
-        android:includeFontPadding="false"
-        android:format12Hour="EEEE, MMM dd"
-        android:format24Hour="EEEE, dd MMM"
-        android:singleLine="true"
-        android:textAlignment="viewStart"
-        android:textColor="?android:attr/textColorSecondary"
-        android:textSize="13sp"
-        android:textStyle="bold" />
+        android:orientation="vertical">
+
+        <TextClock
+            android:layout_marginTop="8dp"
+            android:id="@+id/oos_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:includeFontPadding="false"
+            android:format12Hour="EEEE, MMM dd"
+            android:format24Hour="EEEE, dd MMM"
+            android:singleLine="true"
+            android:textAlignment="viewStart"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <!-- Lunar Date TextView -->
+        <TextView
+            android:id="@+id/custom_clock_lunar_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginTop="2dp"
+            android:singleLine="true"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:alpha="0.7"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
 </LinearLayout>
