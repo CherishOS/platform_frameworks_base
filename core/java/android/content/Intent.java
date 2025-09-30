@@ -5470,6 +5470,17 @@ public class Intent implements Parcelable, Cloneable {
     public static final String ACTION_SCREEN_CAMERA_GESTURE =
             "android.intent.action.SCREEN_CAMERA_GESTURE";
 
+    /**
+     * Broadcast action: perform any initialization required for LineageHW services.
+     * Runs when the service receives the signal the device has booted, but
+     * should happen before {@link android.content.Intent#ACTION_BOOT_COMPLETED}.
+     *
+     * Requires {@link lineageos.platform.Manifest.permission#HARDWARE_ABSTRACTION_ACCESS}.
+     * @hide
+     */
+    public static final String ACTION_INITIALIZE_LINEAGE_HARDWARE =
+            "android.intent.action.INITIALIZE_LINEAGE_HARDWARE";
+
     // ---------------------------------------------------------------------
     // ---------------------------------------------------------------------
     // Standard intent categories (see addCategory()).
