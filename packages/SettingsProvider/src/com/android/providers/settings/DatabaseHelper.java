@@ -2549,8 +2549,7 @@ class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private String getDefaultDeviceName() {
-        return mContext.getResources().getString(R.string.def_device_name_simple,
-            SystemProperties.get("ro.product.marketname", Build.MODEL));
+        return mContext.getResources().getString(R.string.def_device_name_simple, Build.MODEL);
     }
 
     private TelephonyManager getTelephonyManager() {
