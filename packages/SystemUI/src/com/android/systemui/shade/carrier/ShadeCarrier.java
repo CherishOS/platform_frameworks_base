@@ -151,12 +151,6 @@ public class ShadeCarrier extends LinearLayout {
                         com.android.settingslib.R.string.not_default_data_content_description));
     }
 
-    public void updateColors(ColorStateList colorStateList) {
-        mColorStateList = colorStateList;
-        mMobileRoaming.setImageTintList(mColorStateList);
-        mMobileSignal.setImageTintList(mColorStateList);
-    }
-
     @VisibleForTesting
     View getRSSIView() {
         return mMobileGroup;
@@ -164,10 +158,6 @@ public class ShadeCarrier extends LinearLayout {
 
     public void setCarrierText(CharSequence text) {
         mCarrierText.setText(text);
-    }
-
-    public void setCarrierTextColor(int color) {
-        mCarrierText.setTextColor(color);
     }
 
     public void updateTextAppearance(@StyleRes int resId) {
