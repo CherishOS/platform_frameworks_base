@@ -78,7 +78,7 @@ constructor(
             }
 
         val columns = viewModel.columns
-        val rows = viewModel.rows
+        val rows = integerResource(R.integer.quick_settings_paginated_grid_num_rows)
 
         val pages =
             remember(tiles, columns, rows) {
