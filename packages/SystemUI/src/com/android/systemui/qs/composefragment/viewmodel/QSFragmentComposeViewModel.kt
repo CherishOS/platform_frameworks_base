@@ -154,10 +154,6 @@ constructor(
 
     var panelExpansionFraction by mutableStateOf(0f)
 
-    val panelAlpha by derivedStateOf {
-        panelExpansionFraction.coerceIn(0f, 1f)
-    }
-
     var squishinessFraction by mutableStateOf(1f)
 
     val qqsHeaderHeight by
