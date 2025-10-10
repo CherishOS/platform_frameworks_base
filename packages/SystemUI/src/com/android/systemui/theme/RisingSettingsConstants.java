@@ -26,7 +26,8 @@ public class RisingSettingsConstants {
         "ls_media_art_filter",
         "ongoing_action_chip",
         "compact_progress_mode",
-        "statusbar_clock_chip"
+        "statusbar_clock_chip",
+        "island_transparent_background"
     };
     
     public static final String[] SECURE_SETTINGS_KEYS = {
