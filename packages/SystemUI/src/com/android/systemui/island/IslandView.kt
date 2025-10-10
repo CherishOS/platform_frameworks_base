@@ -33,6 +33,7 @@ import android.os.SystemProperties
 import android.os.UserHandle
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.provider.Settings
 import android.service.notification.StatusBarNotification
 import android.telecom.TelecomManager
 import android.text.SpannableString
@@ -310,7 +311,15 @@ class IslandView : ExtendedFloatingActionButton {
     }
 
     fun setIslandBackgroundColorTint() {
-        this.backgroundTintList = ColorStateList.valueOf(context.getColor(R.color.island_background_color))
+        val useTransparentBackground = isTransparentBackgroundEnabled(context)
+        
+        val backgroundColorRes = if (useTransparentBackground) {
+            R.color.island_background_color_transparent
+        } else {
+            R.color.island_background_color
+        }
+        
+        this.backgroundTintList = ColorStateList.valueOf(context.getColor(backgroundColorRes))
         setTextColor(ColorStateList.valueOf(context.getColor(R.color.island_title_color)))
         subtitleColor = context.getColor(R.color.island_subtitle_color)
     }
@@ -555,6 +564,15 @@ class IslandView : ExtendedFloatingActionButton {
         } catch (e: Exception) {
             Log.e(TAG, "Failed to disable compact HUN", e)
         }
+    }
+
+    private fun isTransparentBackgroundEnabled(context: Context): Boolean {
+        return Settings.System.getIntForUser(
+            context.contentResolver,
+            Settings.System.ISLAND_TRANSPARENT_BACKGROUND,
+            0,
+            UserHandle.USER_CURRENT
+        ) == 1
     }
 
 }
