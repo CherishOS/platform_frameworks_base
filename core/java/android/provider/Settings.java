@@ -14326,6 +14326,20 @@ public final class Settings {
          * @hide
          */
         public static final String PULSE_ON_NEW_TRACKS = "pulse_on_new_tracks";
+		
+	    /**
+         * Store vboot key.
+         * @hide
+         */
+        @Readable
+        public static final String VBOOT_KEY = "vboot_key";
+
+        /**
+         * Store vboot hash.
+         * @hide
+         */
+        @Readable
+        public static final String VBOOT_HASH = "vboot_hash";
 
         /**
          * User selectable keybox data.
