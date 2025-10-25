@@ -336,7 +336,9 @@ public final class PixelPropsUtils {
             setPropValue("FINGERPRINT", sDeviceFingerprint);
             return;
         }
-        spoofProvider();
+        if (!KeyProviderManager.isKeyboxAvailable()) {
+            spoofProvider();
+        }
     }
 
     private static boolean isDeviceTablet(Context context) {
