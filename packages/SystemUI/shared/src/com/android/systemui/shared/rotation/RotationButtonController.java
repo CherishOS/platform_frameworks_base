@@ -65,6 +65,7 @@ import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.logging.UiEvent;
 import com.android.internal.logging.UiEventLogger;
 import com.android.internal.logging.UiEventLoggerImpl;
+import com.android.internal.view.RotationPolicy;
 import com.android.systemui.rotation.RotationPolicyWrapper;
 import com.android.systemui.shared.recents.utilities.Utilities;
 import com.android.systemui.shared.recents.utilities.ViewRippler;
