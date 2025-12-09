@@ -1104,7 +1104,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
 
         @Override
         public boolean shouldShow() {
-            return mHasTelephony;
+            return mHasTelephonyCalling;
         }
     }
 
