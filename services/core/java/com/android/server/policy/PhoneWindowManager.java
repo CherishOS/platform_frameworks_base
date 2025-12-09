@@ -5062,7 +5062,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
 
             if (isWakeKey) {
-                wakeUpFromWakeKey(event, true);
+                wakeUpFromWakeKey(event);
             }
             return result;
         }
@@ -5581,8 +5581,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         }
 
         if (isWakeKey) {
-            // Check proximity only on wake key
-            wakeUpFromWakeKey(event, event.getKeyCode() == KeyEvent.KEYCODE_WAKEUP);
+            wakeUpFromWakeKey(event);
         }
 
         // If the key event is targeted to a specific display, then the user is interacting with
@@ -6262,26 +6261,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         wakeUpFromWakeKey(
                 event.getEventTime(),
                 event.getKeyCode(),
-                event.getAction() == KeyEvent.ACTION_DOWN,
-                false);
-    }
-
-    private void wakeUpFromWakeKey(KeyEvent event, boolean withProximityCheck) {
-        wakeUpFromWakeKey(
-                event.getEventTime(),
-                event.getKeyCode(),
-                event.getAction() == KeyEvent.ACTION_DOWN,
-                withProximityCheck);
+                event.getAction() == KeyEvent.ACTION_DOWN);
     }
 
     private void wakeUpFromWakeKey(long eventTime, int keyCode, boolean isDown) {
-        wakeUpFromWakeKey(eventTime, keyCode, isDown, false);
-    }
-
-    private void wakeUpFromWakeKey(long eventTime, int keyCode, boolean isDown,
-            boolean withProximityCheck) {
-        if (mWindowWakeUpPolicy.wakeUpFromKey(DEFAULT_DISPLAY, eventTime, keyCode, isDown,
-                withProximityCheck)) {
+        if (mWindowWakeUpPolicy.wakeUpFromKey(DEFAULT_DISPLAY, eventTime, keyCode, isDown)) {
             final boolean keyCanLaunchHome = keyCode == KEYCODE_HOME || keyCode == KEYCODE_POWER;
             // Start HOME with "reason" extra if sleeping for more than mWakeUpToLastStateTimeout
             if (shouldWakeUpWithHomeIntent() &&  keyCanLaunchHome) {
