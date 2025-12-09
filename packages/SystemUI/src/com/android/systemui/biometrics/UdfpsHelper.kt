@@ -198,7 +198,7 @@ class UdfpsHelper(
                         displayListener,
                         null,
                         /* eventFlags */ 0,
-                        DisplayManager.PRIVATE_EVENT_TYPE_DISPLAY_BRIGHTNESS,
+                        DisplayManager.EVENT_TYPE_DISPLAY_BRIGHTNESS,
                     )
                     view.isVisible = false
                 } else if (qsExpansion == 0f && newIsQsExpanded) {
