@@ -746,7 +746,7 @@ constructor(
                         .padding(top = { qqsPadding }, bottom = { bottomPadding })
             ) {
                 val BrightnessSlider: @Composable () -> Unit = {
-                    Element(ElementKeys.BrightnessSlider, modifier = modifier) {
+                    Element(Elements.BrightnessSlider, modifier = modifier) {
                         BrightnessSlider(viewModel, layoutState)
                     }
                 }
@@ -871,7 +871,7 @@ constructor(
                             modifier = Modifier.height { qqsPadding + qsExtraPadding.roundToPx() }
                         )
                         val BrightnessSlider: @Composable () -> Unit = {
-                            Element(ElementKeys.BrightnessSlider, modifier = modifier) {
+                            Element(Elements.BrightnessSlider, modifier = modifier) {
                                 BrightnessSlider(viewModel, layoutState)
                             }
                         }
