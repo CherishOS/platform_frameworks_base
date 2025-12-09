@@ -978,7 +978,7 @@ public class BackAnimationController implements RemoteCallable<BackAnimationCont
                 InputDevice.SOURCE_KEYBOARD);
 
         ev.setDisplayId(mContext.getDisplay().getDisplayId());
-        return InputManager.getInstance().injectInputEvent(
+        return mContext.getSystemService(InputManager.class).injectInputEvent(
                 ev, InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
     }
 
